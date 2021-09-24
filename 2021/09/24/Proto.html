@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>JavaScript Prototype Pollution</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="shortcut icon" href="/favicon.ico?">
+  </head>
+  <body>
+    <nav class="nav">
+  <ul>
+    
+      <li>
+        <a href="/" >
+        Home
+        </a>
+      </li>
+    
+      <li>
+        <a href="/articles.html" >
+        Articles
+        </a>
+      </li>
+    
+      <li>
+        <a href="/about.html" >
+        About
+        </a>
+      </li>
+    
+      <li>
+        <a href="/frinds.html" >
+        Friends
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+    <main class="content">
+    <article>
+        <header>
+            <h1>JavaScript Prototype Pollution</h1>
+            <small>24 Sep 2021</small>
+        </header>
+    </article>
+    <div>
+        <h1 id="javascript-prototype">Javascript Prototype</h1>
+
+<p>这有点类似与JAVA中的父类，但又不完全是。在js中每一个被叫做对象都会从一个叫Prototype的原型对象中继承属性和方法。</p>
+
+<h2 id="prototype"><code class="language-plaintext highlighter-rouge">Prototype</code></h2>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Bug</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">bug</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">Bug</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">show</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">show</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">bug</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">small_bug</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Bug</span><span class="p">();</span>
+<span class="nx">small_bug</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>这里我们通过类<code class="language-plaintext highlighter-rouge">Bug</code>的属性<code class="language-plaintext highlighter-rouge">Prototype</code>对<code class="language-plaintext highlighter-rouge">Bug</code>的原型增加了方法。因此所有生成的bug对象都天生拥有<code class="language-plaintext highlighter-rouge">show</code>的方法。</p>
+
+<h2 id="__proto__"><code class="language-plaintext highlighter-rouge">__proto__</code></h2>
+
+<p>这里是另一种访问原型对象的方法，通过某个类的实例。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Bug.prototype == small_bug.__proto__
+</code></pre></div></div>
+
+<h2 id="meanings-of-it">Meanings of it</h2>
+
+<p>可以使得<code class="language-plaintext highlighter-rouge">Javascript</code>用友<code class="language-plaintext highlighter-rouge">JAVA</code>中的，封装、继承和多态。</p>
+
+<p>？？？</p>
+
+<p>反转一下checkerboard，如果我们可以修改<code class="language-plaintext highlighter-rouge">small_bug.__proto</code>即<code class="language-plaintext highlighter-rouge">Bug</code>类中Prototype，我们是不是可以干一些amazing的事情。</p>
+
+<h1 id="javascript-prototype-pollution">Javascript Prototype Pollution</h1>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>你可以try一下这段代码：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">small_bug</span> <span class="o">=</span> <span class="p">{</span><span class="na">bug</span> <span class="p">:</span> <span class="mi">1</span><span class="p">};</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">small_bug</span><span class="p">.</span><span class="nx">bug</span><span class="p">);</span>
+<span class="nx">small_bug</span><span class="p">.</span><span class="nx">__proto__</span><span class="p">.</span><span class="nx">bug</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">test</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">concole</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">bug</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>输出结果：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1 2
+</code></pre></div></div>
+
+<p>竟然修改了<code class="language-plaintext highlighter-rouge">Object</code>类。Amazing！这样一来凡是Object的子类都会受到污染。That’s what we call JS Prototype Pollution。</p>
+
+<h2 id="how-to-accomplish-it">How to accomplish it</h2>
+
+<h3 id="merge"><code class="language-plaintext highlighter-rouge">merge</code></h3>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">source</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">merge</span><span class="p">(</span><span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>明显的赋值操作，我们可以将<code class="language-plaintext highlighter-rouge">key</code>改为<code class="language-plaintext highlighter-rouge">__proto__</code>就可以修改<code class="language-plaintext highlighter-rouge">Prototype</code>了。但是要注意一点的是直接改成<code class="language-plaintext highlighter-rouge">__proto__</code>JS不会将它识别为键名。所以进行一个小的操作。</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">o1</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">o2</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="dl">'</span><span class="s1">{"a": 1, "__proto__": {"b": 2}}</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">merge</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">)</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o1</span><span class="p">.</span><span class="nx">a</span><span class="p">,</span> <span class="nx">o1</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span>
+
+<span class="nx">o3</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">o3</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Have a try, amazing!</p>
+
+<p><strong>to be continue…</strong></p>
+
+    </div>
+</main>
+    <footer>
+      <ul>
+        <li><a href="https://twitter.com/Jacen57745631">Twitter</a></li>
+        <li><a href="https://github.com/Jacen-cpu">Github</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
