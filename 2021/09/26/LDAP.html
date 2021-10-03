@@ -46,19 +46,73 @@
     <div>
         <h1 id="ldap">LDAP</h1>
 
-<p>什么是LDAP？它的全称为(Lightweight Directory Access Protocol)翻译过来就是轻量目录访问协议。简单来说这是一种software <code class="language-plaintext highlighter-rouge">Protocal</code>访问服务器中的数据。</p>
+<p>什么是LDAP？它的全称为(Lightweight Directory Access Protocol)翻译过来就是轻量目录访问协议。简单来说这是一种<code class="language-plaintext highlighter-rouge">software Protocal</code>访问服务器(windows)中的数据。而<code class="language-plaintext highlighter-rouge">Activity Directory</code>是LDAP的一个实际应用。</p>
 
-<h2 id="function">Function</h2>
+<h2 id="ad">AD</h2>
 
 <blockquote>
   <p>Active Directory是一个数据库和一组服务，可将用户与其完成工作所需的网络资源关联起来。</p>
 </blockquote>
 
-<h3 id="authentication">authentication</h3>
+<blockquote>
+  <p>具体可参考youtobe大佬https://www.youtube.com/watch?v=Sm5ekO3jFj0&amp;t=350s</p>
+</blockquote>
 
-<p>LDAP最常见的一个用法就是验证信息。so这里我们是不是可以做一些什么？</p>
+<h2 id="ldap-filters">LDAP filters</h2>
 
-<h2 id="ldap-statement--syntax">LDAP Statement  Syntax</h2>
+<p>请参考<a href="https://datatracker.ietf.org/doc/html/rfc4515">RFC4515</a></p>
+
+<p>举个例子， <code class="language-plaintext highlighter-rouge">(username=Bug*)</code>匹配任何usrname为Bug开头的条目。此外我们还可以添加一些逻辑运算符。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">(!(username=Bug*))</code></li>
+  <li><code class="language-plaintext highlighter-rouge">(&amp;(username=Bug)(password=123456))</code></li>
+  <li><code class="language-plaintext highlighter-rouge">(|(username=Bug*)(age&gt;16))</code></li>
+</ul>
+
+<h1 id="ldap-injection">LDAP Injection</h1>
+
+<p>个人感觉和SQL注入差不多。原理都是插入一些未被过滤掉的危险句法，从而达到意想不到的执行结果。</p>
+
+<h2 id="authentication-bypass">Authentication bypass</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>filterContent = "(&amp;(userID=" + enteredUser + ")(password=" + enteredPwd + "))"
+</code></pre></div></div>
+
+<p>如果这样构造：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(&amp;(userID=*)(userID=*))(|(userID=*)(password=))
+</code></pre></div></div>
+
+<p>无需用户名和密码即可登入访问。</p>
+
+<h2 id="information-disclosure">Information disclosure</h2>
+
+<p>LDAP也是可以提供信息共享查询的。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(|(sex=girl)(profession=teacher))
+</code></pre></div></div>
+
+<p>如果这样构造：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(|(sex=girl)(UserID=*))(profession=teacher))
+</code></pre></div></div>
+
+<p>后面的profession会被直接忽略，直接打印出所有用户。</p>
+
+<h1 id="blind-ldap-injection">Blind LDAP Injection</h1>
+
+<p>如果不知道属性名怎么办。盲注是个不错的办法，利用回显的不同，我们往往能得到我们想要的。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(&amp;(userID=John Doe)(objectClass=user))
+</code></pre></div></div>
+
+<p>这样构造可以判断是否有<code class="language-plaintext highlighter-rouge">department</code>这个属性值。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(&amp;(userID=John Doe)(department=*))(objectClass=user))
+</code></pre></div></div>
+
+<p>同样我们也可以对值进行盲注。可以的话，可以尝试一下HTB上的<code class="language-plaintext highlighter-rouge">PhoneBook</code>，这题就是同过盲注注出flag的。</p>
 
 <blockquote>
   <p>Inspired by</p>
