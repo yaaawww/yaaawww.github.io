@@ -58,8 +58,9 @@ Disallow: /admin.phps
 
 <p>禁止我们访问<code class="language-plaintext highlighter-rouge">admin.phps</code>。这是一个很明显的提示。这样我们通过访问<code class="language-plaintext highlighter-rouge">index.phps</code>，顺理成章地发现了很多源码</p>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#index.php
-<span class="cp">&lt;?php</span>
+<p><code class="language-plaintext highlighter-rouge">index.php</code></p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="k">require_once</span><span class="p">(</span><span class="s2">"cookie.php"</span><span class="p">);</span>
 
 <span class="k">if</span><span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s2">"user"</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s2">"pass"</span><span class="p">])){</span>
@@ -80,8 +81,9 @@ Disallow: /admin.phps
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#cookie.php
-<span class="cp">&lt;?php</span>
+<p><code class="language-plaintext highlighter-rouge">cookie.php</code></p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="nb">session_start</span><span class="p">();</span>
 
 <span class="kd">class</span> <span class="nc">permissions</span>
@@ -151,8 +153,9 @@ Disallow: /admin.phps
 <span class="cp">?&gt;</span>
 </code></pre></div></div>
 
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#authentication.php
-<span class="cp">&lt;?php</span>
+<p><code class="language-plaintext highlighter-rouge">authentication.php</code></p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
 <span class="kd">class</span> <span class="nc">access_log</span>
 <span class="p">{</span>
 	<span class="k">public</span> <span class="nv">$log_file</span><span class="p">;</span>
