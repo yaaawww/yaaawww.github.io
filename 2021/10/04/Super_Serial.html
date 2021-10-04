@@ -1,0 +1,211 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>picoCTF Super Seria</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="shortcut icon" href="/favicon.ico?">
+  </head>
+  <body>
+    <nav class="nav">
+  <ul>
+    
+      <li>
+        <a href="/" >
+        Home
+        </a>
+      </li>
+    
+      <li>
+        <a href="/articles.html" >
+        Articles
+        </a>
+      </li>
+    
+      <li>
+        <a href="/about.html" >
+        About
+        </a>
+      </li>
+    
+      <li>
+        <a href="/frinds.html" >
+        Friends
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+    <main class="content">
+    <article>
+        <header>
+            <h1>picoCTF Super Seria</h1>
+            <small>04 Oct 2021</small>
+        </header>
+    </article>
+    <div>
+        <h1 id="super-serial">Super Serial</h1>
+
+<h2 id="how-to-solve-a-question-elegantly">How to solve a question elegantly?</h2>
+
+<p>打开题目，是一个登录页面。此时的大脑里一定会浮现各种各样的想法。Calm down!我们先好好检查一下这个site。<code class="language-plaintext highlighter-rouge">F12</code>一个不错的选择。嗯，这个表单是发送到了<code class="language-plaintext highlighter-rouge">index.php</code>。所以要想登录，就有必要拿到<code class="language-plaintext highlighter-rouge">index.php</code>的源码。所以我们的思维得指向源码泄露。说到这里，就不得不查看一下<code class="language-plaintext highlighter-rouge">robots.txt</code>。这对我们后面的步骤起了至关重要的作用。</p>
+
+<p>oh, it works:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>User-agent: *
+Disallow: /admin.phps
+</code></pre></div></div>
+
+<p>禁止我们访问<code class="language-plaintext highlighter-rouge">admin.phps</code>。这是一个很明显的提示。这样我们通过访问<code class="language-plaintext highlighter-rouge">index.phps</code>，顺理成章地发现了很多源码</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#index.php
+<span class="cp">&lt;?php</span>
+<span class="k">require_once</span><span class="p">(</span><span class="s2">"cookie.php"</span><span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s2">"user"</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="k">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s2">"pass"</span><span class="p">])){</span>
+	<span class="nv">$con</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SQLite3</span><span class="p">(</span><span class="s2">"../users.db"</span><span class="p">);</span>
+	<span class="nv">$username</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s2">"user"</span><span class="p">];</span>
+	<span class="nv">$password</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s2">"pass"</span><span class="p">];</span>
+	<span class="nv">$perm_res</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">permissions</span><span class="p">(</span><span class="nv">$username</span><span class="p">,</span> <span class="nv">$password</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nv">$perm_res</span><span class="o">-&gt;</span><span class="nf">is_guest</span><span class="p">()</span> <span class="o">||</span> <span class="nv">$perm_res</span><span class="o">-&gt;</span><span class="nf">is_admin</span><span class="p">())</span> <span class="p">{</span>
+		<span class="nb">setcookie</span><span class="p">(</span><span class="s2">"login"</span><span class="p">,</span> 
+         <span class="nb">urlencode</span><span class="p">(</span><span class="nb">base64_encode</span><span class="p">(</span><span class="nb">serialize</span><span class="p">(</span><span class="nv">$perm_res</span><span class="p">))),</span> 
+         <span class="nb">time</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="mi">86400</span> <span class="o">*</span> <span class="mi">30</span><span class="p">),</span> <span class="s2">"/"</span><span class="p">);</span>
+		<span class="nb">header</span><span class="p">(</span><span class="s2">"Location: authentication.php"</span><span class="p">);</span>
+		<span class="k">die</span><span class="p">();</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="nv">$msg</span> <span class="o">=</span> <span class="s1">'&lt;h6 class="text-center" style="color:red"&gt;Invalid Login.&lt;/h6&gt;'</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#cookie.php
+<span class="cp">&lt;?php</span>
+<span class="nb">session_start</span><span class="p">();</span>
+
+<span class="kd">class</span> <span class="nc">permissions</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="nv">$username</span><span class="p">;</span>
+	<span class="k">public</span> <span class="nv">$password</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">__construct</span><span class="p">(</span><span class="nv">$u</span><span class="p">,</span> <span class="nv">$p</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">username</span> <span class="o">=</span> <span class="nv">$u</span><span class="p">;</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">password</span> <span class="o">=</span> <span class="nv">$p</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">function</span> <span class="n">__toString</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nv">$u</span><span class="mf">.</span><span class="nv">$p</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">function</span> <span class="n">is_guest</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nv">$guest</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+		<span class="nv">$con</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SQLite3</span><span class="p">(</span><span class="s2">"../users.db"</span><span class="p">);</span>
+		<span class="nv">$username</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">username</span><span class="p">;</span>
+		<span class="nv">$password</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">password</span><span class="p">;</span>
+		<span class="nv">$stm</span> <span class="o">=</span> <span class="nv">$con</span><span class="o">-&gt;</span><span class="nf">prepare</span><span class="p">(</span><span class="s2">"SELECT admin, username FROM users WHERE username=? AND password=?"</span><span class="p">);</span>
+		<span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">bindValue</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nv">$username</span><span class="p">,</span> <span class="no">SQLITE3_TEXT</span><span class="p">);</span>
+		<span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">bindValue</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">$password</span><span class="p">,</span> <span class="no">SQLITE3_TEXT</span><span class="p">);</span>
+		<span class="nv">$res</span> <span class="o">=</span> <span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">execute</span><span class="p">();</span>
+		<span class="nv">$rest</span> <span class="o">=</span> <span class="nv">$res</span><span class="o">-&gt;</span><span class="nf">fetchArray</span><span class="p">();</span>
+		<span class="k">if</span><span class="p">(</span><span class="nv">$rest</span><span class="p">[</span><span class="s2">"username"</span><span class="p">])</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nv">$rest</span><span class="p">[</span><span class="s2">"admin"</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nv">$guest</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nv">$guest</span><span class="p">;</span>
+	<span class="p">}</span>
+
+        <span class="k">function</span> <span class="n">is_admin</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nv">$admin</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+                <span class="nv">$con</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SQLite3</span><span class="p">(</span><span class="s2">"../users.db"</span><span class="p">);</span>
+                <span class="nv">$username</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">username</span><span class="p">;</span>
+                <span class="nv">$password</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">password</span><span class="p">;</span>
+                <span class="nv">$stm</span> <span class="o">=</span> <span class="nv">$con</span><span class="o">-&gt;</span><span class="nf">prepare</span><span class="p">(</span><span class="s2">"SELECT admin, username FROM users WHERE username=? AND password=?"</span><span class="p">);</span>
+                <span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">bindValue</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nv">$username</span><span class="p">,</span> <span class="no">SQLITE3_TEXT</span><span class="p">);</span>
+                <span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">bindValue</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nv">$password</span><span class="p">,</span> <span class="no">SQLITE3_TEXT</span><span class="p">);</span>
+                <span class="nv">$res</span> <span class="o">=</span> <span class="nv">$stm</span><span class="o">-&gt;</span><span class="nf">execute</span><span class="p">();</span>
+                <span class="nv">$rest</span> <span class="o">=</span> <span class="nv">$res</span><span class="o">-&gt;</span><span class="nf">fetchArray</span><span class="p">();</span>
+                <span class="k">if</span><span class="p">(</span><span class="nv">$rest</span><span class="p">[</span><span class="s2">"username"</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nv">$rest</span><span class="p">[</span><span class="s2">"admin"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nv">$admin</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nv">$admin</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_COOKIE</span><span class="p">[</span><span class="s2">"login"</span><span class="p">])){</span>
+	<span class="k">try</span><span class="p">{</span>
+		<span class="nv">$perm</span> <span class="o">=</span> <span class="nb">unserialize</span><span class="p">(</span><span class="nb">base64_decode</span><span class="p">(</span><span class="nb">urldecode</span><span class="p">(</span><span class="nv">$_COOKIE</span><span class="p">[</span><span class="s2">"login"</span><span class="p">])));</span>
+		<span class="nv">$g</span> <span class="o">=</span> <span class="nv">$perm</span><span class="o">-&gt;</span><span class="nf">is_guest</span><span class="p">();</span>
+		<span class="nv">$a</span> <span class="o">=</span> <span class="nv">$perm</span><span class="o">-&gt;</span><span class="nf">is_admin</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="k">catch</span><span class="p">(</span><span class="nc">Error</span> <span class="nv">$e</span><span class="p">){</span>
+		<span class="k">die</span><span class="p">(</span><span class="s2">"Deserialization error. "</span><span class="mf">.</span><span class="nv">$perm</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#authentication.php
+<span class="cp">&lt;?php</span>
+<span class="kd">class</span> <span class="nc">access_log</span>
+<span class="p">{</span>
+	<span class="k">public</span> <span class="nv">$log_file</span><span class="p">;</span>
+
+	<span class="k">function</span> <span class="n">__construct</span><span class="p">(</span><span class="nv">$lf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="n">log_file</span> <span class="o">=</span> <span class="nv">$lf</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">function</span> <span class="n">__toString</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="nf">read_log</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="k">function</span> <span class="n">append_to_log</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">log_file</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="no">FILE_APPEND</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">function</span> <span class="n">read_log</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">log_file</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">require_once</span><span class="p">(</span><span class="s2">"cookie.php"</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$perm</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nv">$perm</span><span class="o">-&gt;</span><span class="nf">is_admin</span><span class="p">()){</span>
+	<span class="nv">$msg</span> <span class="o">=</span> <span class="s2">"Welcome admin"</span><span class="p">;</span>
+	<span class="nv">$log</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">access_log</span><span class="p">(</span><span class="s2">"access.log"</span><span class="p">);</span>
+	<span class="nv">$log</span><span class="o">-&gt;</span><span class="nf">append_to_log</span><span class="p">(</span><span class="s2">"Logged in at "</span><span class="mf">.</span><span class="nb">date</span><span class="p">(</span><span class="s2">"Y-m-d"</span><span class="p">)</span><span class="mf">.</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="nv">$msg</span> <span class="o">=</span> <span class="s2">"Welcome guest"</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>审计完源码，<code class="language-plaintext highlighter-rouge">SQL Ingection</code>是不可能的了。看一眼题目的Hint。flag在<code class="language-plaintext highlighter-rouge">../flag</code>。文件读取？从哪里？源码中唯一可以读取文件函数的就是<code class="language-plaintext highlighter-rouge">acess_log</code>中的<code class="language-plaintext highlighter-rouge">file_get_contents</code>了。这时思路就明确了。</p>
+
+<p>直接上Payload:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#cookie
+login=TzoxMDoiYWNjZXNzX2xvZyI6MTp7czo4OiJsb2dfZmlsZSI7czo3OiIuLi9mbGFnIjt9
+</code></pre></div></div>
+
+<p>在<code class="language-plaintext highlighter-rouge">authentication.php</code>页面改<code class="language-plaintext highlighter-rouge">cookie</code>刷新，直接出flag。</p>
+
+<h1 id="to-sum-up">To sum up</h1>
+
+<p>主要是我们如何触发<code class="language-plaintext highlighter-rouge">file_get_contents</code>这个函数。很显然，有一个<code class="language-plaintext highlighter-rouge">magic method</code> <code class="language-plaintext highlighter-rouge">__toString()</code>，还有<code class="language-plaintext highlighter-rouge">cookie.php</code>中的<code class="language-plaintext highlighter-rouge">die()</code>字符处理。还有我们直接用<code class="language-plaintext highlighter-rouge">access.log</code>这个类就行了，因为这刚好报错跳到catch。</p>
+
+    </div>
+</main>
+    <footer>
+      <ul>
+        <li><a href="https://twitter.com/Jacen57745631">Twitter</a></li>
+        <li><a href="https://github.com/Jacen-cpu">Github</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
