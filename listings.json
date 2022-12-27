@@ -1,13 +1,13 @@
 [
   {
-    "listing": "/index.html",
+    "listing": "/posts/index.html",
     "items": [
       "/posts/bios/index.html",
       "/posts/synchronize/index.html"
     ]
   },
   {
-    "listing": "/posts/index.html",
+    "listing": "/index.html",
     "items": [
       "/posts/bios/index.html",
       "/posts/synchronize/index.html"
