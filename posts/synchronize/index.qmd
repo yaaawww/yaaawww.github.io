@@ -1,0 +1,131 @@
+---
+title: "Synchronize"
+author: "Jacen"
+date: "2022-5-18"
+categories: [OS, Thread]
+image: "t4lk3.jpg"
+---
+
+## Introduction of Synchronization
+ 
+Several variables changing over time keep relationship with each other.
+
+*Asynchronous* != synchronizate
+
+- Thread Synchronization
+
+Let's image two threads, the fisrt thread push data into the buf and the second thread pull data from the buf. In this case, they have to touch some conditon that the second thread can only do after the first thread.
+
+In a short the Thread Synchronization is that some threads know each in an exact time point.
+
+## Producer-Consumer problem
+
+In fact, the Producer is just like the first thread in the previous example and the consumer is the second thread.
+
+So where is the problem.
+
+- The consumer may read the buf when there was no data in the buf. The data which read was useless and can damage the program.
+
+- As the producer, if it continues to add data to the buf ignore the empty place in the buf, buf is to overflow.
+
+### Condition Variables(CV)
+
+- Definition
+
+A condition variable is an explicit queue that threads can put themselves on when some state of execution is not as desired.
+
+ 
+`pthread_cond_t cv;`  
+To declare a condition variable
+
+#### API
+
+- `wait(cv, mutex);`
+
+**Assume the caller having mutex**
+
+Set out the mutex and go to sleep
+
+- `signal/notify(cv);`
+
+wake up someone
+
+- `broadcast/notifyAll(cv);`
+
+wake up everyone
+
+*p-c by cv*
+
+```c
+void Tproduce() {
+	mutex_lock(&lk);
+	if (conunt == n) cond_wait(&cv, &lk);
+	printf("("); count++; cond_signal(&cv);
+	mutex_unlock(&lk);
+}
+
+void Tconsume() {
+	mutex_lock(&lk);
+	if (count == 0) cond_wait(&cv, &lk);
+	printf(")"); count--l cond_signal(&cv);
+	mutex_unlock(&lk);
+}
+```
+
+*paralled compute by cv*
+
+```c
+struct job {
+	void (*run)(void *arg)
+	void *arg;
+}
+ 
+while (1) { 
+	struct job *job;
+	mutex_lock(&mutex);
+	while (! (job = get_job())) { 
+		wait(&cv, &mutex);
+	}
+	mutex_unlock(&mutex);
+	job->run(job->arg);
+}
+```
+ 
+### Semaphores
+ 
+By cv we can coordinate threads in defend of spinning. But can we coordinate more threads not one to use the shared resource.
+
+Semaphores invited by Edsger Dijkstra help us work better.
+
+In cv only one can operate when get the critical conditon. Why not create more chances? Thread who can create a semaphore and enter the operation when it satisfies the condition. 
+
+```c
+#include <semaphore.h>
+sem_t s;
+sem_init(&s, 0, 1);
+```
+#### Two Operation
+
+- P(proberen)
+
+try+decrease; wait; down; in
+
+- V(verhogen)
+
+increase; post;up;out
+ 
+*p-c by semaphore*
+
+```c
+void producer() { 
+	P(&empty);
+	printf("(");
+	V(&fill);
+}
+ 
+void consumer() { 
+	P(&fill);
+	printf(")");
+	V(&empty);
+}
+```

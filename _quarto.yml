@@ -1,0 +1,27 @@
+project:
+  type: website
+
+website:
+  title: "let's go!"
+  navbar:
+    background: "#2d93cd"
+    right:
+      - about.qmd
+      - text: Posts
+        href: posts/index.qmd
+      - icon: github
+        href: https://github.com/Jacen-cpu
+      - icon: twitter
+        href: https://twitter.com/Jacen57745631
+format:
+  html:
+    smmooth-scroll: true
+    theme: journal
+    css: styles.scss
+    link-external-newwindow: true
+    citation-hover: true
+    footnotes-hover: true
+    toc: true
+    code-link: true
+
+editor: visual

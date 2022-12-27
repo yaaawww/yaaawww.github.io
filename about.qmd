@@ -1,0 +1,16 @@
+---
+title: "About"
+image: head.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/Jacen57745631
+    - icon: github
+      text: Github
+      href: https://github.com/Jacen-cpu
+
+---
+
+About this blog
