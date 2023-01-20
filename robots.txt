@@ -1,1 +1,1 @@
-Sitemap: https://waysoahc.xyz/sitemap.xml
+Sitemap: https://github.com/Jacen-cpu/jacen-cpu.github.io/sitemap.xml
