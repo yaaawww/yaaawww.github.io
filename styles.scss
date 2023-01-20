@@ -2,3 +2,21 @@
 .navbar {
     background:rgba(x,x,x,0.3);
 }
+
+/* toc font size */
+#toc-title {
+    font-size: x-large;
+}
+
+.toc-active .ul {
+    font-size: larger;
+}
+
+.sidebar nav[role=doc-toc] ul {
+    font-size: large;
+    font-weight: 400;
+}
+
+.navbar-dark {
+    opacity: 0.9;
+} 

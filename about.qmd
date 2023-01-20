@@ -1,8 +1,9 @@
 ---
 title: "About"
 image: head.jpg
+sidebar: false
 about:
-  template: jolla
+  template: solana
   links:
     - icon: twitter
       text: Twitter

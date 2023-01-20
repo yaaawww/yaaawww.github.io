@@ -6,7 +6,7 @@ listing:
     type: grid
     fields: [image, date, title]
     sort: "date desc"
-    categories: cloud
+    categories: unnumbered
     sort-ui: false
     filter-ui: false
     page-size: 3          
@@ -16,7 +16,7 @@ comments: false
 include-in-header: meta.html  
 toc: true
 ---
-## Recent posts / Posts recentes
+## Recent posts
 
 ::: {#posts}
 :::

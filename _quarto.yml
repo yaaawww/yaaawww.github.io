@@ -2,9 +2,8 @@ project:
   type: website
 
 website:
-  title: "let's go!"
+  title: "Position Zero!"
   navbar:
-    background: "#2d93cd"
     right:
       - about.qmd
       - text: Posts
@@ -13,15 +12,29 @@ website:
         href: https://github.com/Jacen-cpu
       - icon: twitter
         href: https://twitter.com/Jacen57745631
+    background: "#3271a8"
+  sidebar:
+    style: "floating"
+    contents: 
+      - section: "computer science"
+        contents: posts/*/
+    background: "#fafbfc"
+  reader-mode: true
+  page-navigation: true
+  page-footer: "Copyright © 2020, Proudyang" 
+
 format:
   html:
+    page-layout: article
     smmooth-scroll: true
-    theme: journal
+    theme: litera
     css: styles.scss
     link-external-newwindow: true
     citation-hover: true
     footnotes-hover: true
     toc: true
+    toc-title: Contents
+    html-math-method: katex
     code-link: true
 
 editor: visual
