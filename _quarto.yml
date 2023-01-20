@@ -26,9 +26,9 @@ website:
 format:
   html:
     page-layout: article
-    smmooth-scroll: true
-    theme: litera
     css: styles.scss
+    theme: litera
+    smmooth-scroll: true
     link-external-newwindow: true
     citation-hover: true
     footnotes-hover: true
