@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://waysoahc.xyz/about.html</loc>
-    <lastmod>2022-12-27T10:59:00.640Z</lastmod>
+    <loc>https://waysoahc.xyz/index.html</loc>
+    <lastmod>2023-01-20T04:18:42.989Z</lastmod>
   </url>
   <url>
     <loc>https://waysoahc.xyz/posts/synchronize/index.html</loc>
-    <lastmod>2022-12-27T10:59:01.332Z</lastmod>
-  </url>
-  <url>
-    <loc>https://waysoahc.xyz/posts/bios/index.html</loc>
-    <lastmod>2022-12-27T10:59:01.816Z</lastmod>
+    <lastmod>2023-01-20T04:18:43.661Z</lastmod>
   </url>
   <url>
     <loc>https://waysoahc.xyz/posts/index.html</loc>
-    <lastmod>2022-12-27T10:59:02.140Z</lastmod>
+    <lastmod>2023-01-20T04:18:43.977Z</lastmod>
   </url>
   <url>
-    <loc>https://waysoahc.xyz/index.html</loc>
-    <lastmod>2022-12-27T10:59:02.428Z</lastmod>
+    <loc>https://waysoahc.xyz/posts/bios/index.html</loc>
+    <lastmod>2023-01-20T04:18:44.449Z</lastmod>
+  </url>
+  <url>
+    <loc>https://waysoahc.xyz/posts/b_plus_tree/index.html</loc>
+    <lastmod>2023-01-20T04:18:44.717Z</lastmod>
+  </url>
+  <url>
+    <loc>https://waysoahc.xyz/about.html</loc>
+    <lastmod>2023-01-20T04:18:44.981Z</lastmod>
   </url>
 </urlset>

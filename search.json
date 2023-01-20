@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Escape Sky",
     "section": "",
-    "text": "About this blog"
+    "text": "Jan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n See all/Ver todos"
   },
   {
     "objectID": "posts/synchronize/index.html",
@@ -21,6 +21,13 @@
     "text": "Producer-Consumer problem\nIn fact, the Producer is just like the first thread in the previous example and the consumer is the second thread.\nSo where is the problem.\n\nThe consumer may read the buf when there was no data in the buf. The data which read was useless and can damage the program.\nAs the producer, if it continues to add data to the buf ignore the empty place in the buf, buf is to overflow.\n\n\nCondition Variables(CV)\n\nDefinition\n\nA condition variable is an explicit queue that threads can put themselves on when some state of execution is not as desired.\npthread_cond_t cv;\nTo declare a condition variable\n\nAPI\n\nwait(cv, mutex);\n\nAssume the caller having mutex\nSet out the mutex and go to sleep\n\nsignal/notify(cv);\n\nwake up someone\n\nbroadcast/notifyAll(cv);\n\nwake up everyone\np-c by cv\nvoid Tproduce() {\n    mutex_lock(&lk);\n    if (conunt == n) cond_wait(&cv, &lk);\n    printf(\"(\"); count++; cond_signal(&cv);\n    mutex_unlock(&lk);\n}\n\nvoid Tconsume() {\n    mutex_lock(&lk);\n    if (count == 0) cond_wait(&cv, &lk);\n    printf(\")\"); count--l cond_signal(&cv);\n    mutex_unlock(&lk);\n}\nparalled compute by cv\nstruct job {\n    void (*run)(void *arg)\n    void *arg;\n}\n \nwhile (1) { \n    struct job *job;\n    mutex_lock(&mutex);\n    while (! (job = get_job())) { \n        wait(&cv, &mutex);\n    }\n    mutex_unlock(&mutex);\n    job->run(job->arg);\n}\n\n\n\nSemaphores\nBy cv we can coordinate threads in defend of spinning. But can we coordinate more threads not one to use the shared resource.\nSemaphores invited by Edsger Dijkstra help us work better.\nIn cv only one can operate when get the critical conditon. Why not create more chances? Thread who can create a semaphore and enter the operation when it satisfies the condition.\n#include <semaphore.h>\nsem_t s;\nsem_init(&s, 0, 1);\n\nTwo Operation\n\nP(proberen)\n\ntry+decrease; wait; down; in\n\nV(verhogen)\n\nincrease; post;up;out\np-c by semaphore\nvoid producer() { \n    P(&empty);\n    printf(\"(\");\n    V(&fill);\n}\n \nvoid consumer() { \n    P(&fill);\n    printf(\")\");\n    V(&empty);\n}"
   },
   {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "posts/bios/index.html",
     "href": "posts/bios/index.html",
     "title": "bios",
@@ -35,17 +42,24 @@
     "text": "bios function\nINT 0x10 = Video display functions (including VESA/VBE)\nINT 0x13 = mass storage (disk, floppy) access\nINT 0x15 = memory size functions\nINT 0x16 = keyboard functions\nINT 0x10, AH = 1 -- set up the cursor\nINT 0x10, AH = 3 -- cursor position\nINT 0x10, AH = 0x0E -- display char\nINT 0x10, AH = 0x0F -- get video page and mode\nINT 0x10, AH = 0x11 -- set 8x8 font\nINT 0x10, AH = 0x12 -- detect EGA/VGA\nINT 0x10, AH = 0x13 -- display string\nINT 0x10, AH = 0x1200 -- Alternate print screen\nINT 0x10, AH = 0x1201 -- turn off cursor emulation\nINT 0x10, AX = 0x4F00 -- video memory size\nINT 0x10, AX = 0x4F01 -- VESA get mode information call\nINT 0x10, AX = 0x4F02 -- select VESA video modes\nINT 0x10, AX = 0x4F0A -- VESA 2.0 protected mode interface\nINT 0x13, AH = 0 -- reset floppy/hard disk\nINT 0x13, AH = 2 -- read floppy/hard disk in CHS mode\nINT 0x13, AH = 3 -- write floppy/hard disk in CHS mode\nINT 0x13, AH = 0x15 -- detect second disk\nINT 0x13, AH = 0x41 -- test existence of INT 13 extensions\nINT 0x13, AH = 0x42 -- read hard disk in LBA mode\nINT 0x13, AH = 0x43 -- write hard disk in LBA mode\nINT 0x12 -- get low memory size\nINT 0x15, EAX = 0xE820 -- get complete memory map\nINT 0x15, AX = 0xE801 -- get contiguous memory size\nINT 0x15, AX = 0xE881 -- get contiguous memory size\nINT 0x15, AH = 0x88 -- get contiguous memory size\nINT 0x15, AH = 0xC0 -- Detect MCA bus\nINT 0x15, AX = 0x0530 -- Detect APM BIOS\nINT 0x15, AH = 0x5300 -- APM detect\nINT 0x15, AX = 0x5303 -- APM connect using 32 bit\nINT 0x15, AX = 0x5304 -- APM disconnect\nINT 0x16, AH = 0 -- read keyboard scancode (blocking)\nINT 0x16, AH = 1 -- read keyboard scancode (non-blocking)\nINT 0x16, AH = 3 -- keyboard repeat rate"
   },
   {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
+    "objectID": "posts/b_plus_tree/index.html",
+    "href": "posts/b_plus_tree/index.html",
+    "title": "B+ Tree",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "耗时半个月，终于完成了这个逆天的实验。😊写并发部分期间一度想要放弃，但好在最后还是顶了下来，一个简单的bug足足找了有一个星期。最后直接一个图一个图给bug给肯出来了，因为自己做的是22年最新的，不太清楚这个实验之前是什么样的。我是后来才知道22年的文件给的函数很少，所以我的实现和绝大部分同学实现的不太一样，这也为我后期大换血埋下了伏笔😭。话不多说，下面开始回归正题。\n这个project主要分成两个部分，第一个部分是实现b+ tree基本的CRUD。第二个部分则是实现b+ tree的并发控制。"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Escape Sky",
+    "objectID": "posts/b_plus_tree/index.html#b-tree-structure",
+    "href": "posts/b_plus_tree/index.html#b-tree-structure",
+    "title": "B+ Tree",
+    "section": "B+ Tree Structure",
+    "text": "B+ Tree Structure\n我们先来看一下B+ Tree的基本组成。\nB+ Tree 主要由以下两种node组成，每个node是由database特定的page抽象出来的，实际实现的时候会巧妙的运用到reinterpret_cast<pointer of page type>。\n\nInternal Node Page\nLeaf Node Page\n\n\n之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "May 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n See all/Ver todos"
+    "text": "About this blog"
   }
 ]

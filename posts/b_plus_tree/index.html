@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Jacen">
-<meta name="dcterms.date" content="2022-05-23">
+<meta name="author" content="Proudyang">
+<meta name="dcterms.date" content="2023-01-19">
 
-<title>let’s go! - bios</title>
+<title>let’s go! - B+ Tree</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -109,9 +109,9 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">bios</h1>
+      <h1 class="title">B+ Tree</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">OS</div>
+                <div class="quarto-category">DataBase</div>
               </div>
                   </div>
   </div>
@@ -122,14 +122,14 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Jacen </p>
+               <p>Proudyang </p>
             </div>
     </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 23, 2022</p>
+        <p class="date">January 19, 2023</p>
       </div>
     </div>
     
@@ -145,7 +145,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#bios-function" id="toc-bios-function" class="nav-link active" data-scroll-target="#bios-function">bios function</a></li>
+  <li><a href="#introducation" id="toc-introducation" class="nav-link active" data-scroll-target="#introducation">Introducation</a></li>
+  <li><a href="#implement-the-bplustree" id="toc-implement-the-bplustree" class="nav-link" data-scroll-target="#implement-the-bplustree">Implement The BPlusTree</a>
+  <ul class="collapse">
+  <li><a href="#b-tree-structure" id="toc-b-tree-structure" class="nav-link" data-scroll-target="#b-tree-structure">B+ Tree Structure</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -155,48 +159,26 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>(Basic Input/Output System)</p>
-<section id="bios-function" class="level2">
-<h2 class="anchored" data-anchor-id="bios-function">bios function</h2>
-<pre class="assembly"><code>INT 0x10 = Video display functions (including VESA/VBE)
-INT 0x13 = mass storage (disk, floppy) access
-INT 0x15 = memory size functions
-INT 0x16 = keyboard functions</code></pre>
-<pre class="assembly"><code>INT 0x10, AH = 1 -- set up the cursor
-INT 0x10, AH = 3 -- cursor position
-INT 0x10, AH = 0x0E -- display char
-INT 0x10, AH = 0x0F -- get video page and mode
-INT 0x10, AH = 0x11 -- set 8x8 font
-INT 0x10, AH = 0x12 -- detect EGA/VGA
-INT 0x10, AH = 0x13 -- display string
-INT 0x10, AH = 0x1200 -- Alternate print screen
-INT 0x10, AH = 0x1201 -- turn off cursor emulation
-INT 0x10, AX = 0x4F00 -- video memory size
-INT 0x10, AX = 0x4F01 -- VESA get mode information call
-INT 0x10, AX = 0x4F02 -- select VESA video modes
-INT 0x10, AX = 0x4F0A -- VESA 2.0 protected mode interface</code></pre>
-<pre class="assembly"><code>INT 0x13, AH = 0 -- reset floppy/hard disk
-INT 0x13, AH = 2 -- read floppy/hard disk in CHS mode
-INT 0x13, AH = 3 -- write floppy/hard disk in CHS mode
-INT 0x13, AH = 0x15 -- detect second disk
-INT 0x13, AH = 0x41 -- test existence of INT 13 extensions
-INT 0x13, AH = 0x42 -- read hard disk in LBA mode
-INT 0x13, AH = 0x43 -- write hard disk in LBA mode</code></pre>
-<pre class="assembly"><code>INT 0x12 -- get low memory size
-INT 0x15, EAX = 0xE820 -- get complete memory map
-INT 0x15, AX = 0xE801 -- get contiguous memory size
-INT 0x15, AX = 0xE881 -- get contiguous memory size
-INT 0x15, AH = 0x88 -- get contiguous memory size</code></pre>
-<pre class="assembly"><code>INT 0x15, AH = 0xC0 -- Detect MCA bus
-INT 0x15, AX = 0x0530 -- Detect APM BIOS
-INT 0x15, AH = 0x5300 -- APM detect
-INT 0x15, AX = 0x5303 -- APM connect using 32 bit
-INT 0x15, AX = 0x5304 -- APM disconnect</code></pre>
-<pre class="assembly"><code>INT 0x16, AH = 0 -- read keyboard scancode (blocking)
-INT 0x16, AH = 1 -- read keyboard scancode (non-blocking)
-INT 0x16, AH = 3 -- keyboard repeat rate</code></pre>
+<section id="introducation" class="level1">
+<h1>Introducation</h1>
+<p>耗时半个月，终于完成了这个逆天的实验。😊写并发部分期间一度想要放弃，但好在最后还是顶了下来，一个简单的bug足足找了有一个星期。最后直接一个图一个图给bug给肯出来了，因为自己做的是22年最新的，不太清楚这个实验之前是什么样的。我是后来才知道22年的文件给的函数很少，所以我的实现和绝大部分同学实现的不太一样，这也为我后期大换血埋下了伏笔😭。话不多说，下面开始回归正题。</p>
+<p>这个project主要分成两个部分，<strong>第一个部分是实现b+ tree基本的CRUD</strong>。<strong>第二个部分则是实现b+ tree的并发控制</strong>。</p>
+</section>
+<section id="implement-the-bplustree" class="level1">
+<h1>Implement The BPlusTree</h1>
+<section id="b-tree-structure" class="level2">
+<h2 class="anchored" data-anchor-id="b-tree-structure">B+ Tree Structure</h2>
+<p>我们先来看一下B+ Tree的基本组成。</p>
+<p>B+ Tree 主要由以下两种node组成，每个node是由database特定的page抽象出来的，实际实现的时候会巧妙的运用到<code>reinterpret_cast&lt;pointer of page type&gt;</code>。</p>
+<ul>
+<li><strong>Internal Node Page</strong></li>
+<li><strong>Leaf Node Page</strong></li>
+</ul>
+<p><img src="./img/simple_demo.png" class="img-fluid"></p>
+<p>之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
