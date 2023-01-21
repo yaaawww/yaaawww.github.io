@@ -3,7 +3,7 @@ title: "B+ Tree"
 author: "Proudyang"
 date: "2023-1-19"
 categories: [DataBase]
-image: "img/15445.png"
+image: "img/15445.jpg"
 ---
 
 # Introducation
