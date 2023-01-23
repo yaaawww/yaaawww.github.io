@@ -27,7 +27,7 @@ website:
 format:
   html:
     page-layout: article
-    css: style/styles.scss
+    css: css/styles.css
     theme: litera
     smmooth-scroll: true
     link-external-newwindow: true
