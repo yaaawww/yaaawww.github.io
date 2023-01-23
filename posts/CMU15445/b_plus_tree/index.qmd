@@ -25,4 +25,41 @@ B+ Tree 主要由以下两种node组成，每个node是由database特定的page�
 
 ![](./img/simple_demo.png)
 
-之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。
+之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。具体的类定义可以直接参考project的框架代码中的这几个文件。
+
+```c++
+b_plus_tree_page.h
+b_plus_tree_leaf_page.h
+b_plus_tree_internal_page.h
+```
+
+### Flexible Arary Member 
+
+这个是一个在c和c++中常用的技巧。在类或结构体中最后一个元素声明为无长度的数组，可以让最后一个数组接受任意大小的数据(这样使用非常dangerous)。这意味着结构体或者类的大小不是一定的，大小是人为定义的。在这个project里，我们柔性数组最大的大小就是每一个page所存的最大数据总量。这里也要注意一下`reinterpret_cast<>`，它可以对指针指向的数据进行重新解释，我们在这里就是通过`reinterpret_cast<>`来进行page的具体化实现的。
+
+```c++
+auto b_tree_page = reinterpret_cast<BPlusTreePage *>(page->GetData());
+```
+
+## `GetValue()`
+这个是最简单的实现了，只需要从`Root Page`开始通过`Internal Page`索引自上而下找到`Leaf Page`然后通过二分或者其他的算法查找到kv即可。
+
+## `Insert()`
+这里要分两种情况进行讨论**need splitting** or **don't need splitting**。
+
+当然第一种情况是最简单的，找到对应leaf, 然后增加即可，应为插入的时候要进行比较，寻找插入位置。因为每次只是插入一个，我们其实可以使用`Insert Sort`降低时间复杂度。
+
+![](./img/insert.png)
+
+对于`split()`,首先是split的条件。根据note的要求来就可以了，但是这里要注意一下, `Internal Page` 和 `Leaf Page`的区别，`Internal Page`比`Leaf Page`多了一个way的概念，我称之为出口`exit`, 然而节点所含的kv是`num of exit - 1`。所以这是一个注意的点。我在后面的所以实现中`Internal Page Size`都是以节点中所含kv的数量为准，并没有计算第一个kv，第一个是没有key的。
+再者，是split的方向，这里一律向右split，如果父节点需要split，递归向上split。直到`Root Page`，我们会创建新的root。
+
+## `Remove()`
+在`remove`这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。
+
+这里简单的说一下算法:
+
+1. 找到对应的`Leaf Page`，没有对应的key返回false。
+2. 判读是否需要重新分布，判断要求见note，不需要返回true。
+3. 首先进行`steal`，失败了进行`merge`。否则返回true。
+

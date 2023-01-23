@@ -19,6 +19,7 @@ website:
       - section: "computer science"
         contents: posts/*/
     background: "#fafbfc"
+  favicon: favicon.png
   reader-mode: true
   page-navigation: true
   page-footer: "Copyright © 2020, Proudyang" 
@@ -26,7 +27,7 @@ website:
 format:
   html:
     page-layout: article
-    css: styles.scss
+    css: style/styles.scss
     theme: litera
     smmooth-scroll: true
     link-external-newwindow: true
