@@ -40,5 +40,8 @@
   },
   "posts/OS/synchronize/index.qmd": {
     "index.html": "63f87e45"
+  },
+  "posts/CMU15445/concurrency/index.qmd": {
+    "index.html": "625881ab"
   }
 }

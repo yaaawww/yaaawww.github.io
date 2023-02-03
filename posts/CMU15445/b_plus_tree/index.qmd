@@ -3,7 +3,7 @@ title: "B+ Tree"
 author: "Proudyang"
 date: "2023-1-19"
 categories: [DataBase]
-image: "img/15445.jpg"
+image: "../15445.jpg"
 ---
 
 # Introducation
@@ -60,6 +60,14 @@ auto b_tree_page = reinterpret_cast<BPlusTreePage *>(page->GetData());
 这里简单的说一下算法:
 
 1. 找到对应的`Leaf Page`，没有对应的key返回false。
-2. 判读是否需要重新分布，判断要求见note，不需要返回true。
+2. 判断是否需要重新分布，判断要求见note，不需要返回true。
 3. 首先进行`steal`，失败了进行`merge`。否则返回true。
+4. 删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。
 
+> ⚠️ 注意 ️️️⚠️
+>
+> 但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。
+
+# Concurrent Index
+
+这是本实验最难的地方了，需要严格利用latch阻止各种并发bug。
