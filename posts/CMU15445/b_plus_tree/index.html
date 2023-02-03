@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -95,7 +95,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="../../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../../">
-<link href="../../../posts/OS/bios/index.html" rel="next">
+<link href="../../../posts/CMU15445/concurrency/index.html" rel="next">
 <link href="../../../posts/index.html" rel="prev">
 <link href="../../../favicon.png" rel="icon" type="image/png">
 <script src="../../../site_libs/quarto-html/quarto.js"></script>
@@ -213,6 +213,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="../../../posts/CMU15445/b_plus_tree/index.html" class="sidebar-item-text sidebar-link active">B+ Tree</a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../posts/CMU15445/concurrency/index.html" class="sidebar-item-text sidebar-link">Concurrency</a>
+  </div>
+</li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
@@ -257,6 +262,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#insert" id="toc-insert" class="nav-link" data-scroll-target="#insert"><code>Insert()</code></a></li>
   <li><a href="#remove" id="toc-remove" class="nav-link" data-scroll-target="#remove"><code>Remove()</code></a></li>
   </ul></li>
+  <li><a href="#concurrent-index" id="toc-concurrent-index" class="nav-link" data-scroll-target="#concurrent-index">Concurrent Index</a></li>
   </ul>
 </nav>
     </div>
@@ -338,12 +344,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>这里简单的说一下算法:</p>
 <ol type="1">
 <li>找到对应的<code>Leaf Page</code>，没有对应的key返回false。</li>
-<li>判读是否需要重新分布，判断要求见note，不需要返回true。</li>
+<li>判断是否需要重新分布，判断要求见note，不需要返回true。</li>
 <li>首先进行<code>steal</code>，失败了进行<code>merge</code>。否则返回true。</li>
+<li>删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。</li>
 </ol>
-
-
+<blockquote class="blockquote">
+<p>⚠️ 注意 ️️️⚠️</p>
+<p>但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。</p>
+</blockquote>
 </section>
+</section>
+<section id="concurrent-index" class="level1">
+<h1>Concurrent Index</h1>
+<p>这是本实验最难的地方了，需要严格利用latch阻止各种并发bug。</p>
+
+
 </section>
 
 </main> <!-- /main -->
@@ -501,8 +516,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../../posts/OS/bios/index.html" class="pagination-link">
-        <span class="nav-page-text">bios</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../../posts/CMU15445/concurrency/index.html" class="pagination-link">
+        <span class="nav-page-text">Concurrency</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

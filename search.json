@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Escape Sky",
     "section": "",
-    "text": "Jan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n See all/Ver todos"
+    "text": "Jan 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n\n See all/Ver todos"
   },
   {
     "objectID": "posts/OS/synchronize/index.html",
@@ -67,14 +67,14 @@
     "href": "posts/CMU15445/b_plus_tree/index.html#remove",
     "title": "B+ Tree",
     "section": "Remove()",
-    "text": "Remove()\n在remove这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。\n这里简单的说一下算法:\n\n找到对应的Leaf Page，没有对应的key返回false。\n判读是否需要重新分布，判断要求见note，不需要返回true。\n首先进行steal，失败了进行merge。否则返回true。"
+    "text": "Remove()\n在remove这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。\n这里简单的说一下算法:\n\n找到对应的Leaf Page，没有对应的key返回false。\n判断是否需要重新分布，判断要求见note，不需要返回true。\n首先进行steal，失败了进行merge。否则返回true。\n删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。\n\n\n⚠️ 注意 ️️️⚠️\n但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。"
   },
   {
     "objectID": "posts/index.html",
     "href": "posts/index.html",
     "title": "Posts",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nConcurrency\n\n\n\nJan 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
