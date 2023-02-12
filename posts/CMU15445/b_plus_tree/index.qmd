@@ -71,3 +71,46 @@ auto b_tree_page = reinterpret_cast<BPlusTreePage *>(page->GetData());
 # Concurrent Index
 
 这是本实验最难的地方了，需要严格利用latch阻止各种并发bug。
+当然我首先想到的是直接加一把大锁, 锁住整个B+树。但是it's meaningless。
+这里贴一下实验的要求：
+
+![](img/contention_Benchmark.png)
+
+由实验要求可知，我们需要提高并发率。而且要在[2.5, 3.5]之间。
+
+### Latch Crabbing/coupling
+
+"钳式规则"，故名思意，再`FindLeafPage`的时候，我们每次获取节点后，都需要check一下当前节点是否安全，安全就释放所有的祖父节点们的锁。
+
+![](img/crabbing.png)
+
+这个其实不难，照着note实现即可。注意这里要利用transaction里的page_set储存未释放的page。保险起见，建议所有未释放的锁都放在最后释放。
+
+另外一个注意点就是，page_id是需要加锁保护的，因为page在一个transaction中是有可能发生改变的。所以在获取root_page的时候我们需要加锁保护。root_page_id释放是和root_page绑定的，所以我在bplustreepage里又额外加了一个成员变量记录它是否是root_page。
+
+下面是真正逆天的地方。
+![](img/bad_example.png)
+
+这是我一开始的设计。我又加里一个整个leaf层的锁。
+
+![](img/deadlock1.png) 
+
+这就是为什么我上面提到的bplustree要设计好。一开始我的设计是所有merge都向右边，这就导致我会引入双指针链表的设计。所以在修改leaf的时候，会修改前置节点。所以这里我强行加了一把大锁把整个leaf都锁了。这显然是很不合理的。不利于提高并发度。
+
+其实每个叶子节点都是有一个各自的域的，在这个域中的操作是安全的。因此我们不需要前置节点，重新设计merge的方式，就是所以的merge都必须在域中进行。在同一个父节点下面获取前置节点很简单。`Internal_Page`也是同样的思路。(域是指同一个父节点下的领域)
+
+![](img/safeplace.png)
+
+最后讲一下我粗心导致的bug。`std::copy`千万不要用，它的拷贝方式并不是你想的那样，求稳还是forloop一个一个copy。我debug到死也没有想到是这里的bug。一直报deadlock，自己锁自己。(卡了整整一个星期，甚至导致我leaderboard测不出来)
+
+> ⚠️ 注意点 ️️️⚠️
+>
+> 1. 必要的时候page操作完后要设为dirty。
+> 2. 释放锁从上至下。 
+> 3. 不要用`std::copy()`
+
+## Banchmark and Leaderboard
+
+![](img/banchmark.png)
+
+![](img/leaderboard.png)
