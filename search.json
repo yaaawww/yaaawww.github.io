@@ -70,6 +70,13 @@
     "text": "Remove()\n在remove这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。\n这里简单的说一下算法:\n\n找到对应的Leaf Page，没有对应的key返回false。\n判断是否需要重新分布，判断要求见note，不需要返回true。\n首先进行steal，失败了进行merge。否则返回true。\n删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。\n\n\n⚠️ 注意 ️️️⚠️\n但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。"
   },
   {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
+    "href": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
+    "title": "B+ Tree",
+    "section": "Banchmark and Leaderboard",
+    "text": "Banchmark and Leaderboard"
+  },
+  {
     "objectID": "posts/index.html",
     "href": "posts/index.html",
     "title": "Posts",
