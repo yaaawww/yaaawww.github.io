@@ -12,7 +12,7 @@ website:
         href: https://github.com/Jacen-cpu
       - icon: twitter
         href: https://twitter.com/Jacen57745631
-    background: "#3271a8"
+    background: "#eb4c34"
   sidebar:
     style: "floating"
     contents: 
@@ -28,7 +28,7 @@ format:
   html:
     page-layout: article
     css: css/styles.css
-    theme: litera
+    theme: journal
     smmooth-scroll: true
     link-external-newwindow: true
     citation-hover: true

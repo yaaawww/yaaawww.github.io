@@ -1,0 +1,9 @@
+---
+title: "Rust Bytes"
+author: "yang"
+date: "2023-2-27"
+categories: [Rust]
+image: "../rust.jpg"
+---
+
+最近在用rust写lsm存储引擎，多次用到了Bytes。对此记录一下。

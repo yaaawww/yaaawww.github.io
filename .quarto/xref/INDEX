@@ -43,5 +43,11 @@
   },
   "posts/CMU15445/concurrency/index.qmd": {
     "index.html": "625881ab"
+  },
+  "posts/Rust/Bytes/bytes.md": {
+    "bytes.html": "43762240"
+  },
+  "posts/Rust/Bytes/index.qmd": {
+    "index.html": "1fef22c0"
   }
 }
