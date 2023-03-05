@@ -399,6 +399,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>不要用<code>std::copy()</code></li>
 </ol>
 </blockquote>
+<p><strong>2023-3-5 补充</strong></p>
+<p>今天和群友讨论delete page的一个问题，又回想了之前没想通的问题，这次想通了。 其实delete page的那里还是有个地方很坑的。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BPLUSTREE_TYPE<span class="op">::</span>DeletePage<span class="op">(</span>Page <span class="op">*</span>page<span class="op">,</span> <span class="dt">page_id_t</span> page_id<span class="op">,</span> <span class="dt">bool</span> is_dirty<span class="op">,</span> RWType rw<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  rw <span class="op">==</span> RWType<span class="op">::</span>READ <span class="op">?</span> page<span class="op">-&gt;</span>RUnlatch<span class="op">()</span> <span class="op">:</span> page<span class="op">-&gt;</span>WUnlatch<span class="op">();</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// it's not atomic!!!</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">buffer_pool_manager_</span><span class="op">-&gt;</span>UnpinPage<span class="op">(</span>page_id<span class="op">,</span> is_dirty<span class="op">);</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="va">buffer_pool_manager_</span><span class="op">-&gt;</span>DeletePage<span class="op">(</span>page_id<span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>注意看这个函数(这里我把解锁，UnpinPage，DeletePage绑定到了一个函数里)。</p>
+<p>我们在delete page的时候大概率会遇到 delete failing的报错, 就是当前页的pin_count不是0。这是怎么回事呢？我看了网上大部分的解释，大概都是在说，DeletePage整个过程不是atomic的，但都没有解释清楚。以至于我被误导到会有线程等待要被delete的page的锁。我思来想去，被删除的page，怎么可能会被访问到呢？删除之前，索引已经删除了呀！</p>
+<p>正确答案是，要被删除的页正在被前一个页持有，但在它释放锁 到 Unpin的那个间隙，下一个线程执行了删除的操作。</p>
+<p>解决办法很简单——轮询</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span>page<span class="op">-&gt;</span>GetPinCount<span class="op">()</span> <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="banchmark-and-leaderboard" class="level2">
 <h2 class="anchored" data-anchor-id="banchmark-and-leaderboard">Banchmark and Leaderboard</h2>

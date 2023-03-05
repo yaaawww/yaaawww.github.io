@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Proudyang">
-<meta name="dcterms.date" content="2023-01-23">
+<meta name="dcterms.date" content="2023-03-01">
 
 <title>Position Zero! - Concurrency</title>
 <style>
@@ -203,7 +203,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#concurrency" id="toc-concurrency" class="nav-link active" data-scroll-target="#concurrency">Concurrency</a></li>
+  <li><a href="#前言" id="toc-前言" class="nav-link active" data-scroll-target="#前言">前言</a></li>
+  <li><a href="#task-1---lock-manager" id="toc-task-1---lock-manager" class="nav-link" data-scroll-target="#task-1---lock-manager">Task #1 - Lock Manager</a></li>
   </ul>
 </nav>
     </div>
@@ -232,7 +233,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 23, 2023</p>
+      <p class="date">March 1, 2023</p>
     </div>
   </div>
   
@@ -242,8 +243,26 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="concurrency" class="level2">
-<h2 class="anchored" data-anchor-id="concurrency">Concurrency</h2>
+<section id="前言" class="level2">
+<h2 class="anchored" data-anchor-id="前言">前言</h2>
+<p>写这篇文章大抵是我结束这个实验一个月的时间吧。不知道为什么现在什么方向都是这么的卷。其实这一个月来挺焦虑的，之前觉得写个cmu15-445找个实习是没什么问题的。但是如你所见这个方向已经卷麻了，都是人手一套445和824(分布式我还没学)。乐。但是其实写了这套课程的实验也不亏，确实提高了我的编码能力和debug的能力。总之这是这个实验的最后一个part(并发控制)。</p>
+</section>
+<section id="task-1---lock-manager" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---lock-manager">Task #1 - Lock Manager</h2>
+<p>第一个任务是要求我们实现一个锁管理器。什么是锁管理器呢？加个锁还要管理器。因为数据库的并发控制需要满足各种隔离等级。因此一般的加锁方案是无法满足的，所有需要一个管理器管理复杂的加锁解锁服务。</p>
+<p><img src="img/lock_manager.png" class="img-fluid"></p>
+<p>基本的请求流程：(为了不增加理解的复杂度，这里略去了很多细节)</p>
+<p>lock manger维护了一个资源与请求队列对应的表。</p>
+<p><strong>获取锁</strong></p>
+<ol type="1">
+<li><p>txn向lock manger请求锁。</p></li>
+<li><p>将请求加入请求队列中。</p></li>
+<li><p>判断能否给予锁，能， 将请求的状态grant_设为true，不能，将请求休眠。</p></li>
+</ol>
+<p><strong>释放锁</strong></p>
+<ol type="1">
+<li>txn删除对应的请求，唤醒整个队列里休眠的成员。</li>
+</ol>
 
 
 </section>

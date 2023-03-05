@@ -2,8 +2,8 @@
   {
     "listing": "/posts/index.html",
     "items": [
-      "/posts/Rust/Bytes/index.html",
       "/posts/CMU15445/concurrency/index.html",
+      "/posts/Rust/Bytes/index.html",
       "/posts/CMU15445/b_plus_tree/index.html",
       "/posts/OS/bios/index.html",
       "/posts/OS/synchronize/index.html"
@@ -12,8 +12,8 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/Rust/Bytes/index.html",
       "/posts/CMU15445/concurrency/index.html",
+      "/posts/Rust/Bytes/index.html",
       "/posts/CMU15445/b_plus_tree/index.html",
       "/posts/OS/bios/index.html",
       "/posts/OS/synchronize/index.html"

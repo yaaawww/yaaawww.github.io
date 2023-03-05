@@ -7,6 +7,20 @@
     "text": "最近在用rust写lsm存储引擎，多次用到了Bytes。对此记录一下。"
   },
   {
+    "objectID": "posts/CMU15445/concurrency/index.html",
+    "href": "posts/CMU15445/concurrency/index.html",
+    "title": "Concurrency",
+    "section": "",
+    "text": "写这篇文章大抵是我结束这个实验一个月的时间吧。不知道为什么现在什么方向都是这么的卷。其实这一个月来挺焦虑的，之前觉得写个cmu15-445找个实习是没什么问题的。但是如你所见这个方向已经卷麻了，都是人手一套445和824(分布式我还没学)。乐。但是其实写了这套课程的实验也不亏，确实提高了我的编码能力和debug的能力。总之这是这个实验的最后一个part(并发控制)。"
+  },
+  {
+    "objectID": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
+    "href": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
+    "title": "Concurrency",
+    "section": "Task #1 - Lock Manager",
+    "text": "Task #1 - Lock Manager\n第一个任务是要求我们实现一个锁管理器。什么是锁管理器呢？加个锁还要管理器。因为数据库的并发控制需要满足各种隔离等级。因此一般的加锁方案是无法满足的，所有需要一个管理器管理复杂的加锁解锁服务。\n\n基本的请求流程：(为了不增加理解的复杂度，这里略去了很多细节)\nlock manger维护了一个资源与请求队列对应的表。\n获取锁\n\ntxn向lock manger请求锁。\n将请求加入请求队列中。\n判断能否给予锁，能， 将请求的状态grant_设为true，不能，将请求休眠。\n\n释放锁\n\ntxn删除对应的请求，唤醒整个队列里休眠的成员。"
+  },
+  {
     "objectID": "posts/CMU15445/b_plus_tree/index.html",
     "href": "posts/CMU15445/b_plus_tree/index.html",
     "title": "B+ Tree",
@@ -53,7 +67,7 @@
     "href": "posts/index.html",
     "title": "Posts",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nRust Bytes\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nConcurrency\n\n\n\nJan 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nConcurrency\n\n\n\nMar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRust Bytes\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/OS/synchronize/index.html",
@@ -95,6 +109,6 @@
     "href": "index.html",
     "title": "Escape Sky",
     "section": "",
-    "text": "Feb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n\n See all/Ver todos"
+    "text": "Mar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n\n See all/Ver todos"
   }
 ]
