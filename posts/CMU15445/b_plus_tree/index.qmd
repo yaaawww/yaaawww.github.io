@@ -103,11 +103,37 @@ auto b_tree_page = reinterpret_cast<BPlusTreePage *>(page->GetData());
 
 最后讲一下我粗心导致的bug。`std::copy`千万不要用，它的拷贝方式并不是你想的那样，求稳还是forloop一个一个copy。我debug到死也没有想到是这里的bug。一直报deadlock，自己锁自己。(卡了整整一个星期，甚至导致我leaderboard测不出来)
 
+
 > ⚠️ 注意点 ️️️⚠️
 >
 > 1. 必要的时候page操作完后要设为dirty。
 > 2. 释放锁从上至下。 
 > 3. 不要用`std::copy()`
+
+**2023-3-5 补充**
+
+今天和群友讨论delete page的一个问题，又回想了之前没想通的问题，这次想通了。
+其实delete page的那里还是有个地方很坑的。
+
+```c++
+void BPLUSTREE_TYPE::DeletePage(Page *page, page_id_t page_id, bool is_dirty, RWType rw) {
+  rw == RWType::READ ? page->RUnlatch() : page->WUnlatch();
+  // it's not atomic!!!
+  buffer_pool_manager_->UnpinPage(page_id, is_dirty);
+  buffer_pool_manager_->DeletePage(page_id);
+}
+```
+
+注意看这个函数(这里我把解锁，UnpinPage，DeletePage绑定到了一个函数里)。
+
+我们在delete page的时候大概率会遇到 delete failing的报错, 就是当前页的pin_count不是0。这是怎么回事呢？我看了网上大部分的解释，大概都是在说，DeletePage整个过程不是atomic的，但都没有解释清楚。以至于我被误导到会有线程等待要被delete的page的锁。我思来想去，被删除的page，怎么可能会被访问到呢？删除之前，索引已经删除了呀！
+
+正确答案是，要被删除的页正在被前一个页持有，但在它释放锁 到 Unpin的那个间隙，下一个线程执行了删除的操作。
+
+解决办法很简单——轮询
+```c++
+while (page->GetPinCount() != 0) {}
+```
 
 ## Banchmark and Leaderboard
 
