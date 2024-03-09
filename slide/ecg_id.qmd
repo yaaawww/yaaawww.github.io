@@ -1,0 +1,78 @@
+---
+title: 基于轻量化模型优化的ECG-ID算法研究
+include-in-header:
+  - text: |
+      <style>
+      #title-slide .title {
+        font-size: 2em;
+      }
+      #title-slide .author {
+        font-size: 1.1em;
+      }
+      #title-slide .teacher {
+        font-size: 1.1em;
+      }
+      #title-slide .title-image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 10%;
+      }
+      </style>
+author: 姓名：杨傲伟
+teacher: 指导教师：张烨菲
+dddd: 2024年3月13号
+format: 
+    revealjs:
+        height: 900
+        width: 1600
+        logo: "assets/杭电.png"
+        css: "css/simple.css"
+        transition: slide
+        template-partials:
+        - title-slide.html
+        slide-number: c/t #< collapsed/total
+---
+
+# 目录
+- 背景以及意义
+- 研究内容
+- 已完成的内容
+- 进度安排
+
+# 背景以及意义
+- 研究意义
+- 国内外研究动态
+
+## 研究意义
+
+## 心电信号的采集方式
+- in-the-person 即植入型设备
+- on-the-person 即需与受测个体身体连接的设备
+- off-the-person 即指尖、可穿戴等非体表连接的设备
+
+![](assets/take_sign.png)
+
+## One More Thing
+
+::: {.r-stack}
+
+![](assets/iwatch.gif){.fragment width="450"}
+
+![](assets/sample_ecg.png){.fragment}
+
+:::
+
+## 国内外研究动态
+
+# 研究内容
+![](assets/process.png){.absolute bottom=0 right=20 width="750" height="500"}
+
+- ECG信号的预处理研究部分
+- ECG深度学习识别模型的实现部分
+- 利用已有轻量化模型优化学习速度研究部分
+
+
+## ECG信号的预处理研究部分
+## ECG深度学习识别模型的实现部分
+## 利用已有轻量化模型优化学习速度研究部分

@@ -52,5 +52,11 @@
   },
   "posts/Distributed System/CAP/index.qmd": {
     "index.html": "20967eb7"
+  },
+  "posts/Distributed System/index.qmd": {
+    "index.html": "c5471397"
+  },
+  "slide/ecg_id.qmd": {
+    "ecg_id.html": "48993f5e"
   }
 }
