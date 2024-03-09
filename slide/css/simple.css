@@ -1,0 +1,15 @@
+.reveal .slide-logo {
+  height: 150px !important;
+  width: 150px !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+
+.reveal .slides {
+  opacity: 0.9 !important;
+  background-color: rgb(255, 255, 255) !important;
+  border-radius: 7px !important;
+  border: 2px rgb(212, 207, 207) solid !important;
+  display: block !important;
+}
