@@ -49,5 +49,8 @@
   },
   "posts/Rust/Bytes/index.qmd": {
     "index.html": "1fef22c0"
+  },
+  "posts/Distributed System/CAP/index.qmd": {
+    "index.html": "20967eb7"
   }
 }
