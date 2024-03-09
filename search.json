@@ -1,103 +1,5 @@
 [
   {
-    "objectID": "posts/Rust/Bytes/index.html",
-    "href": "posts/Rust/Bytes/index.html",
-    "title": "Rust Bytes",
-    "section": "",
-    "text": "最近在用rust写lsm存储引擎，多次用到了Bytes。对此记录一下。"
-  },
-  {
-    "objectID": "posts/CMU15445/concurrency/index.html",
-    "href": "posts/CMU15445/concurrency/index.html",
-    "title": "Concurrency",
-    "section": "",
-    "text": "写这篇文章大抵是我结束这个实验一个月的时间吧。不知道为什么现在什么方向都是这么的卷。其实这一个月来挺焦虑的，之前觉得写个cmu15-445找个实习是没什么问题的。但是如你所见这个方向已经卷麻了，都是人手一套445和824(分布式我还没学)。乐。但是其实写了这套课程的实验也不亏，确实提高了我的编码能力和debug的能力。总之这是这个实验的最后一个part(并发控制)。"
-  },
-  {
-    "objectID": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
-    "href": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
-    "title": "Concurrency",
-    "section": "Task #1 - Lock Manager",
-    "text": "Task #1 - Lock Manager\n第一个任务是要求我们实现一个锁管理器。什么是锁管理器呢？加个锁还要管理器。因为数据库的并发控制需要满足各种隔离等级。因此一般的加锁方案是无法满足的，所有需要一个管理器管理复杂的加锁解锁服务。\n\n基本的请求流程：(为了不增加理解的复杂度，这里略去了很多细节)\nlock manger维护了一个资源与请求队列对应的表。\n获取锁\n\ntxn向lock manger请求锁。\n将请求加入请求队列中。\n判断能否给予锁，能， 将请求的状态grant_设为true，不能，将请求休眠。\n\n释放锁\n\ntxn删除对应的请求，唤醒整个队列里休眠的成员。"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html",
-    "href": "posts/CMU15445/b_plus_tree/index.html",
-    "title": "B+ Tree",
-    "section": "",
-    "text": "耗时半个月，终于完成了这个逆天的实验。😊写并发部分期间一度想要放弃，但好在最后还是顶了下来，一个简单的bug足足找了有一个星期。最后直接一个图一个图给bug给肯出来了，因为自己做的是22年最新的，不太清楚这个实验之前是什么样的。我是后来才知道22年的文件给的函数很少，所以我的实现和绝大部分同学实现的不太一样，这也为我后期大换血埋下了伏笔😭。话不多说，下面开始回归正题。\n这个project主要分成两个部分，第一个部分是实现b+ tree基本的CRUD。第二个部分则是实现b+ tree的并发控制。"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html#b-tree-structure",
-    "href": "posts/CMU15445/b_plus_tree/index.html#b-tree-structure",
-    "title": "B+ Tree",
-    "section": "B+ Tree Structure",
-    "text": "B+ Tree Structure\n我们先来看一下B+ Tree的基本组成。\nB+ Tree 主要由以下两种node组成，每个node是由database特定的page抽象出来的，实际实现的时候会巧妙的运用到reinterpret_cast<pointer of page type>。\n\nInternal Node Page\nLeaf Node Page\n\n\n之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。具体的类定义可以直接参考project的框架代码中的这几个文件。\nb_plus_tree_page.h\nb_plus_tree_leaf_page.h\nb_plus_tree_internal_page.h\n\nFlexible Arary Member\n这个是一个在c和c++中常用的技巧。在类或结构体中最后一个元素声明为无长度的数组，可以让最后一个数组接受任意大小的数据(这样使用非常dangerous)。这意味着结构体或者类的大小不是一定的，大小是人为定义的。在这个project里，我们柔性数组最大的大小就是每一个page所存的最大数据总量。这里也要注意一下reinterpret_cast<>，它可以对指针指向的数据进行重新解释，我们在这里就是通过reinterpret_cast<>来进行page的具体化实现的。\nauto b_tree_page = reinterpret_cast<BPlusTreePage *>(page->GetData());"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html#getvalue",
-    "href": "posts/CMU15445/b_plus_tree/index.html#getvalue",
-    "title": "B+ Tree",
-    "section": "GetValue()",
-    "text": "GetValue()\n这个是最简单的实现了，只需要从Root Page开始通过Internal Page索引自上而下找到Leaf Page然后通过二分或者其他的算法查找到kv即可。"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html#insert",
-    "href": "posts/CMU15445/b_plus_tree/index.html#insert",
-    "title": "B+ Tree",
-    "section": "Insert()",
-    "text": "Insert()\n这里要分两种情况进行讨论need splitting or don’t need splitting。\n当然第一种情况是最简单的，找到对应leaf, 然后增加即可，应为插入的时候要进行比较，寻找插入位置。因为每次只是插入一个，我们其实可以使用Insert Sort降低时间复杂度。\n\n对于split(),首先是split的条件。根据note的要求来就可以了，但是这里要注意一下, Internal Page 和 Leaf Page的区别，Internal Page比Leaf Page多了一个way的概念，我称之为出口exit, 然而节点所含的kv是num of exit - 1。所以这是一个注意的点。我在后面的所以实现中Internal Page Size都是以节点中所含kv的数量为准，并没有计算第一个kv，第一个是没有key的。 再者，是split的方向，这里一律向右split，如果父节点需要split，递归向上split。直到Root Page，我们会创建新的root。"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html#remove",
-    "href": "posts/CMU15445/b_plus_tree/index.html#remove",
-    "title": "B+ Tree",
-    "section": "Remove()",
-    "text": "Remove()\n在remove这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。\n这里简单的说一下算法:\n\n找到对应的Leaf Page，没有对应的key返回false。\n判断是否需要重新分布，判断要求见note，不需要返回true。\n首先进行steal，失败了进行merge。否则返回true。\n删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。\n\n\n⚠️ 注意 ️️️⚠️\n但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。"
-  },
-  {
-    "objectID": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
-    "href": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
-    "title": "B+ Tree",
-    "section": "Banchmark and Leaderboard",
-    "text": "Banchmark and Leaderboard"
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nConcurrency\n\n\n\nMar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRust Bytes\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/OS/synchronize/index.html",
-    "href": "posts/OS/synchronize/index.html",
-    "title": "Synchronize",
-    "section": "",
-    "text": "Several variables changing over time keep relationship with each other.\nAsynchronous != synchronizate\n\nThread Synchronization\n\nLet’s image two threads, the fisrt thread push data into the buf and the second thread pull data from the buf. In this case, they have to touch some conditon that the second thread can only do after the first thread.\nIn a short the Thread Synchronization is that some threads know each in an exact time point."
-  },
-  {
-    "objectID": "posts/OS/synchronize/index.html#producer-consumer-problem",
-    "href": "posts/OS/synchronize/index.html#producer-consumer-problem",
-    "title": "Synchronize",
-    "section": "Producer-Consumer problem",
-    "text": "Producer-Consumer problem\nIn fact, the Producer is just like the first thread in the previous example and the consumer is the second thread.\nSo where is the problem.\n\nThe consumer may read the buf when there was no data in the buf. The data which read was useless and can damage the program.\nAs the producer, if it continues to add data to the buf ignore the empty place in the buf, buf is to overflow.\n\n\nCondition Variables(CV)\n\nDefinition\n\nA condition variable is an explicit queue that threads can put themselves on when some state of execution is not as desired.\npthread_cond_t cv;\nTo declare a condition variable\n\nAPI\n\nwait(cv, mutex);\n\nAssume the caller having mutex\nSet out the mutex and go to sleep\n\nsignal/notify(cv);\n\nwake up someone\n\nbroadcast/notifyAll(cv);\n\nwake up everyone\np-c by cv\nvoid Tproduce() {\n    mutex_lock(&lk);\n    if (conunt == n) cond_wait(&cv, &lk);\n    printf(\"(\"); count++; cond_signal(&cv);\n    mutex_unlock(&lk);\n}\n\nvoid Tconsume() {\n    mutex_lock(&lk);\n    if (count == 0) cond_wait(&cv, &lk);\n    printf(\")\"); count--l cond_signal(&cv);\n    mutex_unlock(&lk);\n}\nparalled compute by cv\nstruct job {\n    void (*run)(void *arg)\n    void *arg;\n}\n \nwhile (1) { \n    struct job *job;\n    mutex_lock(&mutex);\n    while (! (job = get_job())) { \n        wait(&cv, &mutex);\n    }\n    mutex_unlock(&mutex);\n    job->run(job->arg);\n}\n\n\n\nSemaphores\nBy cv we can coordinate threads in defend of spinning. But can we coordinate more threads not one to use the shared resource.\nSemaphores invited by Edsger Dijkstra help us work better.\nIn cv only one can operate when get the critical conditon. Why not create more chances? Thread who can create a semaphore and enter the operation when it satisfies the condition.\n#include <semaphore.h>\nsem_t s;\nsem_init(&s, 0, 1);\n\nTwo Operation\n\nP(proberen)\n\ntry+decrease; wait; down; in\n\nV(verhogen)\n\nincrease; post;up;out\np-c by semaphore\nvoid producer() { \n    P(&empty);\n    printf(\"(\");\n    V(&fill);\n}\n \nvoid consumer() { \n    P(&fill);\n    printf(\")\");\n    V(&empty);\n}"
-  },
-  {
-    "objectID": "posts/OS/bios/index.html",
-    "href": "posts/OS/bios/index.html",
-    "title": "bios",
-    "section": "",
-    "text": "(Basic Input/Output System)"
-  },
-  {
-    "objectID": "posts/OS/bios/index.html#bios-function",
-    "href": "posts/OS/bios/index.html#bios-function",
-    "title": "bios",
-    "section": "bios function",
-    "text": "bios function\nINT 0x10 = Video display functions (including VESA/VBE)\nINT 0x13 = mass storage (disk, floppy) access\nINT 0x15 = memory size functions\nINT 0x16 = keyboard functions\nINT 0x10, AH = 1 -- set up the cursor\nINT 0x10, AH = 3 -- cursor position\nINT 0x10, AH = 0x0E -- display char\nINT 0x10, AH = 0x0F -- get video page and mode\nINT 0x10, AH = 0x11 -- set 8x8 font\nINT 0x10, AH = 0x12 -- detect EGA/VGA\nINT 0x10, AH = 0x13 -- display string\nINT 0x10, AH = 0x1200 -- Alternate print screen\nINT 0x10, AH = 0x1201 -- turn off cursor emulation\nINT 0x10, AX = 0x4F00 -- video memory size\nINT 0x10, AX = 0x4F01 -- VESA get mode information call\nINT 0x10, AX = 0x4F02 -- select VESA video modes\nINT 0x10, AX = 0x4F0A -- VESA 2.0 protected mode interface\nINT 0x13, AH = 0 -- reset floppy/hard disk\nINT 0x13, AH = 2 -- read floppy/hard disk in CHS mode\nINT 0x13, AH = 3 -- write floppy/hard disk in CHS mode\nINT 0x13, AH = 0x15 -- detect second disk\nINT 0x13, AH = 0x41 -- test existence of INT 13 extensions\nINT 0x13, AH = 0x42 -- read hard disk in LBA mode\nINT 0x13, AH = 0x43 -- write hard disk in LBA mode\nINT 0x12 -- get low memory size\nINT 0x15, EAX = 0xE820 -- get complete memory map\nINT 0x15, AX = 0xE801 -- get contiguous memory size\nINT 0x15, AX = 0xE881 -- get contiguous memory size\nINT 0x15, AH = 0x88 -- get contiguous memory size\nINT 0x15, AH = 0xC0 -- Detect MCA bus\nINT 0x15, AX = 0x0530 -- Detect APM BIOS\nINT 0x15, AH = 0x5300 -- APM detect\nINT 0x15, AX = 0x5303 -- APM connect using 32 bit\nINT 0x15, AX = 0x5304 -- APM disconnect\nINT 0x16, AH = 0 -- read keyboard scancode (blocking)\nINT 0x16, AH = 1 -- read keyboard scancode (non-blocking)\nINT 0x16, AH = 3 -- keyboard repeat rate"
-  },
-  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
@@ -105,8 +7,221 @@
     "text": "About this blog"
   },
   {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nConcurrency\n\n\n\nMar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRust Bytes\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nB+ Tree\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nbios\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSynchronize\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items",
+    "crumbs": [
+      "About",
+      "computer science"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html",
+    "href": "posts/CMU15445/b_plus_tree/index.html",
+    "title": "B+ Tree",
+    "section": "",
+    "text": "耗时半个月，终于完成了这个逆天的实验。😊写并发部分期间一度想要放弃，但好在最后还是顶了下来，一个简单的bug足足找了有一个星期。最后直接一个图一个图给bug给肯出来了，因为自己做的是22年最新的，不太清楚这个实验之前是什么样的。我是后来才知道22年的文件给的函数很少，所以我的实现和绝大部分同学实现的不太一样，这也为我后期大换血埋下了伏笔😭。话不多说，下面开始回归正题。\n这个project主要分成两个部分，第一个部分是实现b+ tree基本的CRUD。第二个部分则是实现b+ tree的并发控制。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#b-tree-structure",
+    "href": "posts/CMU15445/b_plus_tree/index.html#b-tree-structure",
+    "title": "B+ Tree",
+    "section": "B+ Tree Structure",
+    "text": "B+ Tree Structure\n我们先来看一下B+ Tree的基本组成。\nB+ Tree 主要由以下两种node组成，每个node是由database特定的page抽象出来的，实际实现的时候会巧妙的运用到reinterpret_cast&lt;pointer of page type&gt;。\n\nInternal Node Page\nLeaf Node Page\n\n\n之前如果熟悉B Tree的话。就会立马知道B+ Tree和B Tree的一个显著的区别。B+ Tree只会把value存在叶子节点里，Internal Node只是用来帮助索引的抽象。具体的类定义可以直接参考project的框架代码中的这几个文件。\nb_plus_tree_page.h\nb_plus_tree_leaf_page.h\nb_plus_tree_internal_page.h\n\nFlexible Arary Member\n这个是一个在c和c++中常用的技巧。在类或结构体中最后一个元素声明为无长度的数组，可以让最后一个数组接受任意大小的数据(这样使用非常dangerous)。这意味着结构体或者类的大小不是一定的，大小是人为定义的。在这个project里，我们柔性数组最大的大小就是每一个page所存的最大数据总量。这里也要注意一下reinterpret_cast&lt;&gt;，它可以对指针指向的数据进行重新解释，我们在这里就是通过reinterpret_cast&lt;&gt;来进行page的具体化实现的。\nauto b_tree_page = reinterpret_cast&lt;BPlusTreePage *&gt;(page-&gt;GetData());",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#getvalue",
+    "href": "posts/CMU15445/b_plus_tree/index.html#getvalue",
+    "title": "B+ Tree",
+    "section": "GetValue()",
+    "text": "GetValue()\n这个是最简单的实现了，只需要从Root Page开始通过Internal Page索引自上而下找到Leaf Page然后通过二分或者其他的算法查找到kv即可。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#insert",
+    "href": "posts/CMU15445/b_plus_tree/index.html#insert",
+    "title": "B+ Tree",
+    "section": "Insert()",
+    "text": "Insert()\n这里要分两种情况进行讨论need splitting or don’t need splitting。\n当然第一种情况是最简单的，找到对应leaf, 然后增加即可，应为插入的时候要进行比较，寻找插入位置。因为每次只是插入一个，我们其实可以使用Insert Sort降低时间复杂度。\n\n对于split(),首先是split的条件。根据note的要求来就可以了，但是这里要注意一下, Internal Page 和 Leaf Page的区别，Internal Page比Leaf Page多了一个way的概念，我称之为出口exit, 然而节点所含的kv是num of exit - 1。所以这是一个注意的点。我在后面的所以实现中Internal Page Size都是以节点中所含kv的数量为准，并没有计算第一个kv，第一个是没有key的。 再者，是split的方向，这里一律向右split，如果父节点需要split，递归向上split。直到Root Page，我们会创建新的root。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#remove",
+    "href": "posts/CMU15445/b_plus_tree/index.html#remove",
+    "title": "B+ Tree",
+    "section": "Remove()",
+    "text": "Remove()\n在remove这里逻辑稍微有点复杂，但是并不是很难，因为大的还在后面。\n这里简单的说一下算法:\n\n找到对应的Leaf Page，没有对应的key返回false。\n判断是否需要重新分布，判断要求见note，不需要返回true。\n首先进行steal，失败了进行merge。否则返回true。\n删除父节点的一个exit, 判读是否需要redistribute。向上递归进行。\n\n\n⚠️ 注意 ️️️⚠️\n但凡是合并的部分，一律向左合并，所有的操作都只能在同父下完成。都是为了后期添加并发铺路。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
+    "href": "posts/CMU15445/b_plus_tree/index.html#banchmark-and-leaderboard",
+    "title": "B+ Tree",
+    "section": "Banchmark and Leaderboard",
+    "text": "Banchmark and Leaderboard",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "B+ Tree"
+    ]
+  },
+  {
+    "objectID": "posts/OS/bios/index.html",
+    "href": "posts/OS/bios/index.html",
+    "title": "bios",
+    "section": "",
+    "text": "(Basic Input/Output System)",
+    "crumbs": [
+      "About",
+      "computer science",
+      "OS",
+      "bios"
+    ]
+  },
+  {
+    "objectID": "posts/OS/bios/index.html#bios-function",
+    "href": "posts/OS/bios/index.html#bios-function",
+    "title": "bios",
+    "section": "bios function",
+    "text": "bios function\nINT 0x10 = Video display functions (including VESA/VBE)\nINT 0x13 = mass storage (disk, floppy) access\nINT 0x15 = memory size functions\nINT 0x16 = keyboard functions\nINT 0x10, AH = 1 -- set up the cursor\nINT 0x10, AH = 3 -- cursor position\nINT 0x10, AH = 0x0E -- display char\nINT 0x10, AH = 0x0F -- get video page and mode\nINT 0x10, AH = 0x11 -- set 8x8 font\nINT 0x10, AH = 0x12 -- detect EGA/VGA\nINT 0x10, AH = 0x13 -- display string\nINT 0x10, AH = 0x1200 -- Alternate print screen\nINT 0x10, AH = 0x1201 -- turn off cursor emulation\nINT 0x10, AX = 0x4F00 -- video memory size\nINT 0x10, AX = 0x4F01 -- VESA get mode information call\nINT 0x10, AX = 0x4F02 -- select VESA video modes\nINT 0x10, AX = 0x4F0A -- VESA 2.0 protected mode interface\nINT 0x13, AH = 0 -- reset floppy/hard disk\nINT 0x13, AH = 2 -- read floppy/hard disk in CHS mode\nINT 0x13, AH = 3 -- write floppy/hard disk in CHS mode\nINT 0x13, AH = 0x15 -- detect second disk\nINT 0x13, AH = 0x41 -- test existence of INT 13 extensions\nINT 0x13, AH = 0x42 -- read hard disk in LBA mode\nINT 0x13, AH = 0x43 -- write hard disk in LBA mode\nINT 0x12 -- get low memory size\nINT 0x15, EAX = 0xE820 -- get complete memory map\nINT 0x15, AX = 0xE801 -- get contiguous memory size\nINT 0x15, AX = 0xE881 -- get contiguous memory size\nINT 0x15, AH = 0x88 -- get contiguous memory size\nINT 0x15, AH = 0xC0 -- Detect MCA bus\nINT 0x15, AX = 0x0530 -- Detect APM BIOS\nINT 0x15, AH = 0x5300 -- APM detect\nINT 0x15, AX = 0x5303 -- APM connect using 32 bit\nINT 0x15, AX = 0x5304 -- APM disconnect\nINT 0x16, AH = 0 -- read keyboard scancode (blocking)\nINT 0x16, AH = 1 -- read keyboard scancode (non-blocking)\nINT 0x16, AH = 3 -- keyboard repeat rate",
+    "crumbs": [
+      "About",
+      "computer science",
+      "OS",
+      "bios"
+    ]
+  },
+  {
+    "objectID": "posts/OS/synchronize/index.html",
+    "href": "posts/OS/synchronize/index.html",
+    "title": "Synchronize",
+    "section": "",
+    "text": "Several variables changing over time keep relationship with each other.\nAsynchronous != synchronizate\n\nThread Synchronization\n\nLet’s image two threads, the fisrt thread push data into the buf and the second thread pull data from the buf. In this case, they have to touch some conditon that the second thread can only do after the first thread.\nIn a short the Thread Synchronization is that some threads know each in an exact time point.",
+    "crumbs": [
+      "About",
+      "computer science",
+      "OS",
+      "Synchronize"
+    ]
+  },
+  {
+    "objectID": "posts/OS/synchronize/index.html#introduction-of-synchronization",
+    "href": "posts/OS/synchronize/index.html#introduction-of-synchronization",
+    "title": "Synchronize",
+    "section": "",
+    "text": "Several variables changing over time keep relationship with each other.\nAsynchronous != synchronizate\n\nThread Synchronization\n\nLet’s image two threads, the fisrt thread push data into the buf and the second thread pull data from the buf. In this case, they have to touch some conditon that the second thread can only do after the first thread.\nIn a short the Thread Synchronization is that some threads know each in an exact time point.",
+    "crumbs": [
+      "About",
+      "computer science",
+      "OS",
+      "Synchronize"
+    ]
+  },
+  {
+    "objectID": "posts/OS/synchronize/index.html#producer-consumer-problem",
+    "href": "posts/OS/synchronize/index.html#producer-consumer-problem",
+    "title": "Synchronize",
+    "section": "Producer-Consumer problem",
+    "text": "Producer-Consumer problem\nIn fact, the Producer is just like the first thread in the previous example and the consumer is the second thread.\nSo where is the problem.\n\nThe consumer may read the buf when there was no data in the buf. The data which read was useless and can damage the program.\nAs the producer, if it continues to add data to the buf ignore the empty place in the buf, buf is to overflow.\n\n\nCondition Variables(CV)\n\nDefinition\n\nA condition variable is an explicit queue that threads can put themselves on when some state of execution is not as desired.\npthread_cond_t cv;\nTo declare a condition variable\n\nAPI\n\nwait(cv, mutex);\n\nAssume the caller having mutex\nSet out the mutex and go to sleep\n\nsignal/notify(cv);\n\nwake up someone\n\nbroadcast/notifyAll(cv);\n\nwake up everyone\np-c by cv\nvoid Tproduce() {\n    mutex_lock(&lk);\n    if (conunt == n) cond_wait(&cv, &lk);\n    printf(\"(\"); count++; cond_signal(&cv);\n    mutex_unlock(&lk);\n}\n\nvoid Tconsume() {\n    mutex_lock(&lk);\n    if (count == 0) cond_wait(&cv, &lk);\n    printf(\")\"); count--l cond_signal(&cv);\n    mutex_unlock(&lk);\n}\nparalled compute by cv\nstruct job {\n    void (*run)(void *arg)\n    void *arg;\n}\n \nwhile (1) { \n    struct job *job;\n    mutex_lock(&mutex);\n    while (! (job = get_job())) { \n        wait(&cv, &mutex);\n    }\n    mutex_unlock(&mutex);\n    job-&gt;run(job-&gt;arg);\n}\n\n\n\nSemaphores\nBy cv we can coordinate threads in defend of spinning. But can we coordinate more threads not one to use the shared resource.\nSemaphores invited by Edsger Dijkstra help us work better.\nIn cv only one can operate when get the critical conditon. Why not create more chances? Thread who can create a semaphore and enter the operation when it satisfies the condition.\n#include &lt;semaphore.h&gt;\nsem_t s;\nsem_init(&s, 0, 1);\n\nTwo Operation\n\nP(proberen)\n\ntry+decrease; wait; down; in\n\nV(verhogen)\n\nincrease; post;up;out\np-c by semaphore\nvoid producer() { \n    P(&empty);\n    printf(\"(\");\n    V(&fill);\n}\n \nvoid consumer() { \n    P(&fill);\n    printf(\")\");\n    V(&empty);\n}",
+    "crumbs": [
+      "About",
+      "computer science",
+      "OS",
+      "Synchronize"
+    ]
+  },
+  {
+    "objectID": "posts/Rust/Bytes/index.html",
+    "href": "posts/Rust/Bytes/index.html",
+    "title": "Rust Bytes",
+    "section": "",
+    "text": "最近在用rust写lsm存储引擎，多次用到了Bytes。对此记录一下。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "Rust",
+      "Rust Bytes"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/concurrency/index.html",
+    "href": "posts/CMU15445/concurrency/index.html",
+    "title": "Concurrency",
+    "section": "",
+    "text": "写这篇文章大抵是我结束这个实验一个月的时间吧。不知道为什么现在什么方向都是这么的卷。其实这一个月来挺焦虑的，之前觉得写个cmu15-445找个实习是没什么问题的。但是如你所见这个方向已经卷麻了，都是人手一套445和824(分布式我还没学)。乐。但是其实写了这套课程的实验也不亏，确实提高了我的编码能力和debug的能力。总之这是这个实验的最后一个part(并发控制)。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "Concurrency"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/concurrency/index.html#前言",
+    "href": "posts/CMU15445/concurrency/index.html#前言",
+    "title": "Concurrency",
+    "section": "",
+    "text": "写这篇文章大抵是我结束这个实验一个月的时间吧。不知道为什么现在什么方向都是这么的卷。其实这一个月来挺焦虑的，之前觉得写个cmu15-445找个实习是没什么问题的。但是如你所见这个方向已经卷麻了，都是人手一套445和824(分布式我还没学)。乐。但是其实写了这套课程的实验也不亏，确实提高了我的编码能力和debug的能力。总之这是这个实验的最后一个part(并发控制)。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "Concurrency"
+    ]
+  },
+  {
+    "objectID": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
+    "href": "posts/CMU15445/concurrency/index.html#task-1---lock-manager",
+    "title": "Concurrency",
+    "section": "Task #1 - Lock Manager",
+    "text": "Task #1 - Lock Manager\n第一个任务是要求我们实现一个锁管理器。什么是锁管理器呢？加个锁还要管理器。因为数据库的并发控制需要满足各种隔离等级。因此一般的加锁方案是无法满足的，所有需要一个管理器管理复杂的加锁解锁服务。\n\n基本的请求流程：(为了不增加理解的复杂度，这里略去了很多细节)\nlock manger维护了一个资源与请求队列对应的表。\n获取锁\n\ntxn向lock manger请求锁。\n将请求加入请求队列中。\n判断能否给予锁，能， 将请求的状态grant_设为true，不能，将请求休眠。\n\n释放锁\n\ntxn删除对应的请求，唤醒整个队列里休眠的成员。",
+    "crumbs": [
+      "About",
+      "computer science",
+      "CMU15445",
+      "Concurrency"
+    ]
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
+    "title": "Escape Sky",
+    "section": "",
+    "text": "Mar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n\n See all/Ver todos"
+  },
+  {
+    "objectID": "index.html#recent-posts",
+    "href": "index.html#recent-posts",
     "title": "Escape Sky",
     "section": "",
     "text": "Mar 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nJan 19, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 23, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2022\n\n\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n\n See all/Ver todos"
