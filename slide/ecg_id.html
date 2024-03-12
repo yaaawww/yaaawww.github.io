@@ -327,10 +327,10 @@
     font-size: 2em;
   }
   #title-slide .author {
-    font-size: 1.1em;
+    font-size: 1em;
   }
   #title-slide .teacher {
-    font-size: 1.1em;
+    font-size: 1em;
   }
   #title-slide .title-image {
     display: block;
@@ -349,10 +349,9 @@
 
 <img class="title-image" src="assets/heart.png">
 
-  <p class="teacher">指导教师：张烨菲</p>
-
   <p class="author">姓名：杨傲伟</p>
 
+  <p class="teacher">指导教师：张烨菲</p>
 
 
   <p class="dddd">2024年3月13号</p>
@@ -371,12 +370,45 @@
 <section id="背景以及意义" class="title-slide slide level1 center">
 <h1>背景以及意义</h1>
 <ul>
-<li>研究意义</li>
+<li>研究意义
+<ul>
+<li><strong>ECG-ID身份识别</strong></li>
+<li><span style="color:#de3e3e;"><strong>轻量化</strong></span></li>
+</ul></li>
 <li>国内外研究动态</li>
 </ul>
+<p><img data-src="assets/Pruning-effect-on-the-network.png" class="absolute" style="bottom: 0px; right: 20px; width: 750px; height: 500px; "></p>
 </section>
 <section id="研究意义" class="slide level2">
 <h2>研究意义</h2>
+<h3 id="背景">背景</h3>
+<ul>
+<li><p>随着信息化的高速发展，基于生物识别技术的个人身份识别已在资料保密、医疗保险及金融安全等众多领域得到了广泛的发展和应用。</p></li>
+<li><p>据美国市场调查机构Grand View Research在2023年发布的最新数据显示， 2022年全球生物识别技术市场规模为342.7亿美元，预测未来7年将以20.4%的复合年增长率持续扩大；</p></li>
+<li><p>我国国家统计局、国家经济信息中心等权威部门的数据亦显示，我国生物识别技术的市场规模正在以远超24.8%的年复合增长率逐年扩大，并将于2025年达到930.5亿人民币的市场规模。</p></li>
+<li><p>人脸、指纹、DNA等传统生物身份识别技术因其便捷性在日常生活中得到了广泛的应用。</p></li>
+<li><p>然而，许多不法分子有目的地收集大量的生物特征数据，利用AI换脸、指纹复刻等违法行为进行盗窃和诈骗，传统生物身份识别方式正面临着前所未有的挑战。</p></li>
+<li><p>因此，如何提升个体身份识别的安全性和隐私保护，在这些切实的危害出现之前防范于未然，成为亟待解决的问题。</p></li>
+</ul>
+</section>
+<section id="生物特征识别技术" class="slide level2">
+<h2>生物特征识别技术</h2>
+<ul>
+<li>静态特征识别 <img data-src="assets/静态特征识别.png"></li>
+<li>行为特征识别 <img data-src="assets/行为特征识别.png"></li>
+</ul>
+</section>
+<section id="ecg-id身份识别" class="slide level2">
+<h2>ECG-ID身份识别</h2>
+<ul>
+<li>心电（Electrocardiogra，ECG）信号是人体内部的重要生物电信号，不同于人脸和虹膜数据，心电数据属于人体内部的连续信号，具有难收集，难伪造的特点。</li>
+<li>心电信号的性质
+<ul>
+<li>唯一性</li>
+<li>持久性</li>
+<li>时间连续性 与人脸识别等传统生物识别方法相比，基于ECG信号的生物识别 (ECG Identify, ECGID) 具备具有“活体”识别的高防伪能力，在生物识别领域受到越来越多的关注。而且可穿戴式、便捷的采集设备的发展为心电数据采集带来了便利。</li>
+</ul></li>
+</ul>
 </section>
 <section id="心电信号的采集方式" class="slide level2">
 <h2>心电信号的采集方式</h2>
@@ -394,8 +426,22 @@
 <p><img data-src="assets/sample_ecg.png" class="fragment"></p>
 </div>
 </section>
-<section id="国内外研究动态" class="slide level2">
-<h2>国内外研究动态</h2>
+<section id="为何需要轻量化模型" class="slide level2">
+<h2>为何需要轻量化模型</h2>
+<ul>
+<li><p>身份识别在很多场景下需要快速准确地进行识别，然而深度学习模型通常具有大量参数，导致训练和识别过程非常耗时。 为解决这一问题，研究轻量化模型变得至关重要。</p></li>
+<li><p><strong>轻量化的方式</strong></p>
+<ul>
+<li>减少参数数量</li>
+<li>简化网络结构</li>
+<li>压缩技术</li>
+</ul></li>
+<li><p><strong>轻量化的意义</strong></p>
+<ul>
+<li>提高身份识别系统的响应速度，还可以降低能耗和硬件要求，适用于移动设备、嵌入式系统等场景。</li>
+<li>通过研究和优化轻量化模型，可以在保证准确性的前提下提升身份识别系统的效率和实用性，推动智能生物识别技术在各个领域的广泛应用。</li>
+</ul></li>
+</ul>
 </section></section>
 <section>
 <section id="研究内容" class="title-slide slide level1 center">
@@ -407,14 +453,162 @@
 <li>利用已有轻量化模型优化学习速度研究部分</li>
 </ul>
 </section>
-<section id="ecg信号的预处理研究部分" class="slide level2">
-<h2>ECG信号的预处理研究部分</h2>
+<section id="ecg信号的预处理研究部分去噪" class="slide level2">
+<h2>ECG信号的预处理研究部分:去噪</h2>
+<ul>
+<li>ECG信号主要有三种噪声
+<ul>
+<li><strong>基线漂移</strong>：噪声使心电信号的基线位置发生变化，呈上下震荡，主要是由人体环境的各种不确定因素以及心电信号的采集过程中电极和人体接触缝隙造成的，是最复杂的一种噪声，频率一般小于1Hz。</li>
+<li><strong>工频干扰</strong>：由电力系统产生的干扰，即心电信号采集仪器的电源电压产生的噪声干扰。通常工频干扰所产生的噪声频率也为50Hz。这类噪声对ECG信号的影响最大。</li>
+<li><strong>肌电干扰</strong>:一般为人体肌肉在颤动时产生的多种复杂生物电信号，肌电干扰的频率范围基本覆盖了ECG信号大部分频段，因此无法直接使用滤波器来去除肌电干扰，会造成原始信号的缺失。 <img data-src="assets/noise.png"></li>
+</ul></li>
+</ul>
+</section>
+<section id="ecg信号的预处理研究部分去噪-1" class="slide level2">
+<h2>ECG信号的预处理研究部分:去噪</h2>
+<h3 id="中值滤波">中值滤波</h3>
+<ul>
+<li>中值滤波法是一种非线性平滑技术，它将每一像素点的灰度值设置为该点某邻域窗口内的所有像素点灰度值的中值。</li>
+<li>我们通过将ECG信号进行中值滤波得出信号的总体的偏移的情况，也就叫做是基线。接着我们将原始信号减去基线信号得出基线稳定的过滤ECG信号。 <img data-src="assets/midft.png" style="width:65.0%"></li>
+</ul>
+</section>
+<section id="ecg信号的预处理研究部分去噪-2" class="slide level2">
+<h2>ECG信号的预处理研究部分:去噪</h2>
+<h3 id="小波去噪">小波去噪</h3>
+<ul>
+<li>选用“db5”作为小波基对原始信号进行9尺度小波变换，滤除D1层和D2层的细节分量，其余层数小波系数通过软阈值公式对信号的阈值进行处理。 <img data-src="assets/denosie.png"></li>
+</ul>
+</section>
+<section id="ecg信号的预处理研究部分时频域转换处理" class="slide level2">
+<h2>ECG信号的预处理研究部分:时频域转换处理</h2>
+<ul>
+<li>考虑到ECG一维信号的时间特征信息有限，为了提升后续模型的训练效果，我们将一维信号进行时频域转换，实现从1D时序信号到2D图片的转换，为后续识别供更加丰富的时频域、空间域的联合特征。这里的时频域转换，</li>
+<li>我们采用了递归图和格拉姆差角场两种不同的方式，后续具体采用哪个图，根据学习的效果来定。</li>
+</ul>
+<p><img data-src="assets/rp.png" class="quarto-figure quarto-figure-center"> <img data-src="assets/graf.png" class="quarto-figure quarto-figure-center"></p>
 </section>
 <section id="ecg深度学习识别模型的实现部分" class="slide level2">
 <h2>ECG深度学习识别模型的实现部分</h2>
+<ul>
+<li>对于传统的机器学习模型，数据的特征需要设计者针对其特性进行手动提取，而深度学习则可以自动提取每类数据中的不同特征，解决手动特征提取存在的问题同时又保证了模型高精度的识别准确率。 我们利用上一个阶段预处理生成的格拉姆图或者递归图进行身份识别的深度学习模型训练</li>
+<li>具体的深度学习模型采用的是CNN的经典网络<strong>VGGNet</strong>。
+<ul>
+<li>VGGNet在2014年由牛津大学计算机视觉组VGG (Visual Geometry Group) 提出。</li>
+<li>VGGNet的结构非常简洁，具有小卷积和，小池化核，通道数多，层数深，特征图宽的优点。</li>
+<li>VGGNet在图像的分类识别方面表现出色，这有利于我们对前一个阶段中生成的ECG信号2D图片数据集进行深度学习。</li>
+</ul></li>
+</ul>
 </section>
 <section id="利用已有轻量化模型优化学习速度研究部分" class="slide level2">
 <h2>利用已有轻量化模型优化学习速度研究部分</h2>
+<ul>
+<li>虽然在实际应用中模型是预训练好的，但当有新用户注册的时候，我们需要对重新录入的数据进行重新训练，所以我们需要考虑到训练时间这个因素，<strong>训练时间是模型是否有落地应用价值的因素之一</strong>。</li>
+<li>对于这个问题，我们采用基于MobileNet等已有的轻量化网络模型</li>
+<li>使用适当的模型压缩技术
+<ul>
+<li>稀疏卷积</li>
+<li>剪枝</li>
+</ul></li>
+</ul>
+<p><img data-src="assets/mobileNet.png" class="absolute" style="bottom: 0px; right: 20px; width: 1000px; height: 400px; "></p>
+</section></section>
+<section>
+<section id="已经完成的部分" class="title-slide slide level1 center">
+<h1>已经完成的部分</h1>
+<ul>
+<li>信号预处理✅
+<ul>
+<li>信号去噪✅</li>
+<li>一维时序信号的时频域转换✅</li>
+</ul></li>
+</ul>
+</section>
+<section id="信号去噪" class="slide level2">
+<h2>信号去噪</h2>
+
+<img data-src="assets/dn_out.png" class="r-stretch"></section>
+<section id="一维时序信号的时频域转换" class="slide level2">
+<h2>一维时序信号的时频域转换</h2>
+<ul>
+<li>格拉姆角场图结果</li>
+</ul>
+<p><img data-src="assets/all_graf.png" style="width:50.0%"></p>
+<ul>
+<li>递归图结果</li>
+</ul>
+<p><img data-src="assets/all_rp.png" style="width:50.0%"></p>
+</section></section>
+<section>
+<section id="进度安排" class="title-slide slide level1 center">
+<h1>进度安排</h1>
+
+</section>
+<section id="进度" class="slide level2">
+<h2>进度</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">序号</th>
+<th style="text-align: center;">时间</th>
+<th style="text-align: center;">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2023.12.22-2023.12.28</td>
+<td style="text-align: center;">选好毕业设计题目并准备相关资料 ✅</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2023.12.29-2024.1.14</td>
+<td style="text-align: center;">接受任务书 ✅</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2024.1.15-2024.3.10</td>
+<td style="text-align: center;">搜集资料，准备开题报告 ✅</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">2024.3.11-2024.3.17</td>
+<td style="text-align: center;">开题报告会</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">2024.3.18-2024 3.25</td>
+<td style="text-align: center;">心电信号消噪处理的实现</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">2024.3.26-2024 4.24</td>
+<td style="text-align: center;">轻量级的ECG识别任务实现</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">2024.4.25-2024.5.12</td>
+<td style="text-align: center;">撰写毕业论文</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">2024.5.13-2024.5.23</td>
+<td style="text-align: center;">论文审核及查重</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">2024.5.24-2024.5.28</td>
+<td style="text-align: center;">论文自查、专家抽查论文</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">2024.5.29-2024.6.7</td>
+<td style="text-align: center;">答辩报告会</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section id="请各位老师批评指正" class="title-slide slide level1 center">
+<h1>请各位老师批评指正</h1>
 
 <div class="quarto-auto-generated-content">
 <p><img src="assets/杭电.png" class="slide-logo"></p>
@@ -422,7 +616,7 @@
 
 </div>
 </div>
-</section></section>
+</section>
     </div>
   </div>
 
