@@ -60,16 +60,16 @@ format:
 ![](assets/%E8%A1%8C%E4%B8%BA%E7%89%B9%E5%BE%81%E8%AF%86%E5%88%AB.png)
 
 ## ECG-ID身份识别
-- 心电（Electrocardiogra，ECG）信号是人体内部的重要生物电信号，不同于人脸和虹膜数据，心电数据属于人体内部的连续信号，具有难收集，难伪造的特点。
+- 心电（Electrocardiogra，ECG）信号是人体内部的重要生物电信号，不同于人脸和虹膜数据，心电数据属于人体内部的连续信号，具有**难收集**，**难伪造**的特点。
 - 心电信号的性质
-  - 唯一性
-  - 持久性
-  - 时间连续性
+  - **唯一性**
+  - **持久性**
+  - **时间连续性**
 - 心电信号的优点
-  - **“活体”识别**的高防伪能力，在生物识别领域受到越来越多的关注。
-  - 可穿戴式、便捷的采集设备的发展为心电数据采集带来了便利。
+  - **“活体”识别**的高防伪能力
+  - 可穿戴式、便捷的采集设备
 
-![](assets/ecg.png){.absolute bottom=350 right=300 width="500"}
+![](assets/ecg.png){.absolute bottom=150 right=300 width=700}
 
 ## 心电信号的采集方式
 
@@ -109,6 +109,14 @@ format:
 - ECG深度学习识别模型的实现
 - 利用已有轻量化模型优化学习速度研究
 
+## 数据来源
+
+- 两个常用数据库：
+  - ECGID：https://physionet.org/content/ecgiddb/1.0.0/
+  - CYBHi ：https://zenodo.org/records/2381823#.XT2Ik9VKG2w
+
+![](assets/database.png){width=700}
+![](assets/database_2.png){width=700}
 
 ## ECG信号的预处理研究:去噪
 - ECG信号主要有三种噪声
