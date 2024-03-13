@@ -25,7 +25,7 @@
     "href": "slide/ecg_id.html#ecg-id身份识别",
     "title": "Position Zero!",
     "section": "ECG-ID身份识别",
-    "text": "ECG-ID身份识别\n\n心电（Electrocardiogra，ECG）信号是人体内部的重要生物电信号，不同于人脸和虹膜数据，心电数据属于人体内部的连续信号，具有难收集，难伪造的特点。\n心电信号的性质\n\n唯一性\n持久性\n时间连续性\n\n心电信号的优点\n\n“活体”识别的高防伪能力，在生物识别领域受到越来越多的关注。\n可穿戴式、便捷的采集设备的发展为心电数据采集带来了便利。"
+    "text": "ECG-ID身份识别\n\n心电（Electrocardiogra，ECG）信号是人体内部的重要生物电信号，不同于人脸和虹膜数据，心电数据属于人体内部的连续信号，具有难收集，难伪造的特点。\n心电信号的性质\n\n唯一性\n持久性\n时间连续性\n\n心电信号的优点\n\n“活体”识别的高防伪能力\n可穿戴式、便捷的采集设备"
   },
   {
     "objectID": "slide/ecg_id.html#心电信号的采集方式",
@@ -47,6 +47,13 @@
     "title": "Position Zero!",
     "section": "为何需要轻量化模型",
     "text": "为何需要轻量化模型\n\n身份识别在很多场景下需要快速准确地进行识别，然而深度学习模型通常具有大量参数，导致训练和识别过程非常耗时。 为解决这一问题，研究轻量化模型变得至关重要。\n轻量化的方式\n\n减少参数数量\n简化网络结构\n压缩技术\n\n轻量化的意义\n\n提高身份识别系统的响应速度，还可以降低能耗和硬件要求，适用于移动设备、嵌入式系统等场景。\n通过研究和优化轻量化模型，可以在保证准确性的前提下提升身份识别系统的效率和实用性，推动智能生物识别技术在各个领域的广泛应用。"
+  },
+  {
+    "objectID": "slide/ecg_id.html#数据来源",
+    "href": "slide/ecg_id.html#数据来源",
+    "title": "Position Zero!",
+    "section": "数据来源",
+    "text": "数据来源\n\n两个常用数据库：\n\nECGID：https://physionet.org/content/ecgiddb/1.0.0/\nCYBHi ：https://zenodo.org/records/2381823#.XT2Ik9VKG2w"
   },
   {
     "objectID": "slide/ecg_id.html#ecg信号的预处理研究去噪",
