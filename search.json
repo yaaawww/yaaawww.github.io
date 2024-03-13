@@ -81,7 +81,7 @@
     "href": "slide/ecg_id.html#ecg深度学习识别模型的实现",
     "title": "Position Zero!",
     "section": "ECG深度学习识别模型的实现",
-    "text": "ECG深度学习识别模型的实现\n\n深度学习可以自动提取每类数据中的不同特征，解决手动特征提取存在的问题同时又保证了模型高精度的识别准确率。\n本研究会采用VGGNet\n\nVGGNet在2014年由牛津大学计算机视觉组VGG (Visual Geometry Group) 提出。\nVGGNet的结构非常简洁，具有小卷积和，小池化核，通道数多，层数深，特征图宽的优点。\nVGGNet在图像的分类识别方面表现出色，这有利于我们对前一个阶段中生成的ECG信号2D图片数据集进行深度学习。"
+    "text": "ECG深度学习识别模型的实现\n\n深度学习可以自动提取每类数据中的不同特征，解决手动特征提取存在的问题同时又保证了模型高精度的识别准确率。\n本研究会采用VGGNet\n\nVGGNet在2014年由牛津大学计算机视觉组VGG (Visual Geometry Group) 提出。\nVGGNet结构简洁，具有小卷积和，小池化核，通道数多，层数深，特征图宽的优点。\nVGGNet在图像的分类识别方面表现出色，这有利于我们对前一个阶段中生成的ECG信号2D图片数据集进行深度学习。"
   },
   {
     "objectID": "slide/ecg_id.html#利用已有轻量化模型优化学习速度研究",

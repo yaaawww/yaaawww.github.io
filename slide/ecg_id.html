@@ -444,7 +444,7 @@
 <section>
 <section id="研究内容" class="title-slide slide level1 center">
 <h1>研究内容</h1>
-<p><img data-src="assets/process.png" class="absolute" style="bottom: 0px; right: 20px; width: 750px; height: 500px; "></p>
+<p><img data-src="assets/process.png" class="absolute" style="bottom: 0px; right: 20px; width: 800px; "></p>
 <ul>
 <li>ECG信号的预处理研究</li>
 <li>ECG深度学习识别模型的实现</li>
@@ -467,7 +467,7 @@
 <h3 id="中值滤波">中值滤波</h3>
 <ul>
 <li>中值滤波法是一种非线性平滑技术，它将每一像素点的灰度值设置为该点某邻域窗口内的所有像素点灰度值的中值。</li>
-<li>我们通过将ECG信号进行中值滤波得出信号的总体的偏移的情况，也就叫做是基线。接着我们将原始信号减去基线信号得出基线稳定的过滤ECG信号。 <img data-src="assets/midft.png" style="width:65.0%"></li>
+<li>我们通过将ECG信号进行中值滤波得出信号的总体的偏移的情况，也就叫做是<strong>基线</strong>。接着我们将原始信号减去基线信号得出基线稳定的过滤ECG信号。 <img data-src="assets/midft.png" style="width:65.0%"></li>
 </ul>
 </section>
 <section id="ecg信号的预处理研究去噪-2" class="slide level2">
@@ -480,24 +480,24 @@
 <section id="ecg信号的预处理时频域转换处理" class="slide level2">
 <h2>ECG信号的预处理:时频域转换处理</h2>
 <ul>
-<li>考虑到ECG一维信号的时间特征信息有限，为了提升后续模型的训练效果，我们将一维信号进行时频域转换，实现从1D时序信号到2D图片的转换，为后续识别供更加丰富的时频域、空间域的联合特征。这里的时频域转换，</li>
+<li>考虑到ECG一维信号的时间特征信息<strong>有限</strong>，为了提升后续模型的训练效果，我们将一维信号进行时频域转换，实现从1D时序信号到2D图片的转换，为后续识别供更加<strong>丰富的时频域、空间域的联合特征</strong>。这里的时频域转换，</li>
 <li>我们采用了递归图和格拉姆差角场两种不同的方式，后续具体采用哪个图，根据学习的效果来定。</li>
 </ul>
-<p><img data-src="assets/rp.png" class="quarto-figure quarto-figure-center"> <img data-src="assets/graf.png" class="quarto-figure quarto-figure-center"></p>
+<p><img data-src="assets/rp.png" class="absolute" style="bottom: 21px; right: 200px; "> <img data-src="assets/graf.png" class="absolute" style="left: 240px; bottom: 50px; width: 450px; "></p>
 </section>
 <section id="ecg深度学习识别模型的实现" class="slide level2">
 <h2>ECG深度学习识别模型的实现</h2>
 <ul>
 <li>深度学习可以自动提取每类数据中的不同特征，解决手动特征提取存在的问题同时又保证了模型高精度的识别准确率。</li>
-<li>本研究会采用VGGNet
+<li>本研究会采用<strong>VGGNet</strong>
 <ul>
 <li>VGGNet在2014年由牛津大学计算机视觉组VGG (Visual Geometry Group) 提出。</li>
-<li>VGGNet的结构非常简洁，具有小卷积和，小池化核，通道数多，层数深，特征图宽的优点。</li>
+<li>VGGNet结构简洁，具有小卷积和，小池化核，通道数多，层数深，特征图宽的优点。</li>
 <li>VGGNet在图像的分类识别方面表现出色，这有利于我们对前一个阶段中生成的ECG信号2D图片数据集进行深度学习。</li>
 </ul></li>
 </ul>
-
-<img data-src="assets/VGGNet.jpg" class="r-stretch"></section>
+<p><img data-src="assets/VGGNet.jpg" class="absolute" style="bottom: 40px; right: 40px; width: 750px; "></p>
+</section>
 <section id="利用已有轻量化模型优化学习速度研究" class="slide level2">
 <h2>利用已有轻量化模型优化学习速度研究</h2>
 <ul>
@@ -509,7 +509,7 @@
 <li>剪枝</li>
 </ul></li>
 </ul>
-<p><img data-src="assets/mobileNet.png" class="absolute" style="bottom: 0px; right: 20px; width: 1000px; height: 400px; "></p>
+<p><img data-src="assets/mobileNet.png" class="absolute" style="bottom: 50px; right: 50px; width: 1000px; "></p>
 </section></section>
 <section>
 <section id="已经完成的部分" class="title-slide slide level1 center">
